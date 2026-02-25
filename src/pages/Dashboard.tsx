@@ -198,6 +198,7 @@ const Dashboard = () => {
           </Button>
           <Button
             variant="outline"
+            onClick={() => navigate("/clients")}
             className="flex-1 justify-start gap-3 h-13 tracking-[0.12em] uppercase text-xs border-border rounded-sm"
           >
             <Users className="h-4 w-4" /> View Clients
