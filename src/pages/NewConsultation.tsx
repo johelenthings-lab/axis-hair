@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Upload, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const NewConsultation = () => {
@@ -30,10 +30,16 @@ const NewConsultation = () => {
   const [inspirationNotes, setInspirationNotes] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
+  const [clientPhoto, setClientPhoto] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async () => {
     if (!clientName.trim()) {
       toast({ title: "Client name is required", variant: "destructive" });
+      return;
+    }
+    if (!clientPhoto) {
+      toast({ title: "Client photo is required", variant: "destructive" });
       return;
     }
 
@@ -82,6 +88,32 @@ const NewConsultation = () => {
       setLoading(false);
       return;
     }
+
+    // Upload client photo to storage
+    const fileExt = clientPhoto.name.split(".").pop() || "jpg";
+    const filePath = `${user.id}/${consultation.id}/original.${fileExt}`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from("consultation-images")
+      .upload(filePath, clientPhoto, { upsert: true });
+
+    if (uploadErr) {
+      toast({ title: "Failed to upload photo", description: uploadErr.message, variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+
+    // Get signed URL (private bucket)
+    const { data: urlData } = await supabase.storage
+      .from("consultation-images")
+      .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year
+
+    // Update consultation with image URL
+    const imageUrl = urlData?.signedUrl || filePath;
+    await supabase
+      .from("consultations")
+      .update({ original_image_url: imageUrl })
+      .eq("id", consultation.id);
 
     setLoading(false);
     navigate(`/client-view/${consultation.id}`);
@@ -236,24 +268,43 @@ const NewConsultation = () => {
             </div>
           </div>
 
-          {/* Photo Uploads */}
+          {/* Photo Upload */}
           <div>
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
               Photo Upload
             </h2>
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-sm p-8 text-center hover:border-foreground/30 transition-colors cursor-pointer">
-                <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-3" />
-                <p className="text-sm font-medium text-foreground mb-1">Upload Client Photo</p>
-                <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                  For best results, use natural lighting and face camera directly.
-                </p>
-              </div>
-              <div className="border border-dashed border-border rounded-sm p-6 text-center hover:border-foreground/30 transition-colors cursor-pointer">
-                <Upload className="h-4 w-4 mx-auto text-muted-foreground mb-2" />
-                <p className="text-xs font-medium text-foreground mb-1">
-                  Upload Inspiration Photo <span className="text-muted-foreground/60">(optional)</span>
-                </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setClientPhoto(file);
+                }}
+              />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-sm p-8 text-center transition-colors cursor-pointer ${
+                  clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
+                }`}
+              >
+                {clientPhoto ? (
+                  <>
+                    <ImageIcon className="h-5 w-5 mx-auto text-accent mb-3" />
+                    <p className="text-sm font-medium text-foreground mb-1">{clientPhoto.name}</p>
+                    <p className="text-xs text-muted-foreground">Click to change photo</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-3" />
+                    <p className="text-sm font-medium text-foreground mb-1">Upload Client Photo *</p>
+                    <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                      JPG or PNG. For best results, use natural lighting and face camera directly.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
