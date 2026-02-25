@@ -125,26 +125,33 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-10">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-12">
 
         {/* 1️⃣ Today's Focus */}
         <section className="bg-accent text-accent-foreground rounded-sm p-8 md:p-10">
-          <h2 className="font-display text-xs tracking-[0.25em] uppercase text-accent-foreground/50 mb-6">
-            Today's Focus
-          </h2>
+          <div className="flex items-start justify-between mb-6">
+            <h2 className="font-display text-xs tracking-[0.25em] uppercase text-accent-foreground/50">
+              Today's Focus
+            </h2>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-accent-foreground/30 font-medium">
+              System Status: {awaitingApproval > 0 ? "Action Required" : "Stable"}
+            </span>
+          </div>
           {hasFocusData ? (
             <ul className="space-y-2">
               <li className="text-sm text-accent-foreground/80">
-                <span className="font-semibold text-accent-foreground">{thisWeek.length}</span> consultation{thisWeek.length !== 1 ? "s" : ""} this week
+                You have <span className="font-semibold text-accent-foreground">{thisWeek.length}</span> consultation{thisWeek.length !== 1 ? "s" : ""} scheduled this week.
               </li>
               <li className="text-sm text-accent-foreground/80">
-                <span className="font-semibold text-accent-foreground">{awaitingApproval}</span> awaiting approval
+                {awaitingApproval > 0
+                  ? <><span className="font-semibold text-accent-foreground">{awaitingApproval}</span> consultation{awaitingApproval !== 1 ? "s" : ""} require{awaitingApproval === 1 ? "s" : ""} your approval.</>
+                  : "No consultations require approval."}
               </li>
               <li className="text-sm text-accent-foreground/80">
-                <span className="font-semibold text-accent-foreground">{upcoming}</span> upcoming appointment{upcoming !== 1 ? "s" : ""}
+                You have <span className="font-semibold text-accent-foreground">{upcoming}</span> upcoming appointment{upcoming !== 1 ? "s" : ""}.
               </li>
               <li className="text-sm text-accent-foreground/80">
-                Estimated revenue this week: <span className="font-semibold text-accent-foreground">{fmt(weeklyRevenue)}</span>
+                Estimated revenue on schedule this week: <span className="font-semibold text-accent-foreground">{fmt(weeklyRevenue)}</span>.
               </li>
             </ul>
           ) : (
@@ -178,7 +185,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 md:gap-8">
             {metrics.map((m) => (
               <div key={m.label}>
-                <p className="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+                <p className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground/80">
                   {m.value}
                 </p>
                 <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground mt-2">
