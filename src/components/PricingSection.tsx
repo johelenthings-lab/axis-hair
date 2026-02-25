@@ -3,12 +3,12 @@ import { useRef } from "react";
 import { Check } from "lucide-react";
 
 const features = [
-  "AI-powered style previews",
-  "Structured client intake",
-  "Approval workflow",
-  "Client history dashboard",
-  "Unlimited consultations",
-  "Priority support",
+  "Unlimited AI consultations",
+  "Before & after preview",
+  "Regenerate recommendations",
+  "Public share links",
+  "Professional PDF export",
+  "Revenue snapshot dashboard",
 ];
 
 const PricingSection = () => {
@@ -28,8 +28,11 @@ const PricingSection = () => {
             Pricing
           </p>
           <h2 className="font-display font-bold text-3xl md:text-4xl tracking-[0.05em] text-foreground">
-            One plan. Full access.
+            Consult Smarter. Earn More.
           </h2>
+          <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
+            AXIS HAIR™ transforms consultations into premium client experiences.
+          </p>
         </motion.div>
 
         <motion.div
@@ -39,11 +42,17 @@ const PricingSection = () => {
           className="border-2 rounded-sm p-10 md:p-12 text-center"
           style={{ borderColor: "hsl(var(--axis-charcoal))", boxShadow: "0 12px 50px -14px hsl(var(--axis-charcoal) / 0.25)" }}
         >
-          <p className="font-display font-extrabold text-8xl md:text-9xl tracking-tight text-foreground mb-1">
-            $79
+          <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground mb-4 font-semibold">
+            AXIS HAIR™ PRO
           </p>
-          <p className="text-sm text-muted-foreground tracking-[0.1em] uppercase mb-10">
-            per month · per stylist
+          <p className="font-display font-extrabold text-8xl md:text-9xl tracking-tight text-foreground mb-1">
+            $49
+          </p>
+          <p className="text-sm text-muted-foreground tracking-[0.1em] uppercase mb-2">
+            per month
+          </p>
+          <p className="text-xs text-muted-foreground/70 mb-10">
+            14-day free trial
           </p>
 
           <div className="axis-divider mb-10" />
@@ -58,11 +67,8 @@ const PricingSection = () => {
           </div>
 
           <button className="w-full text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-8 py-5 hover:opacity-90 transition-opacity font-semibold">
-            Start 14-Day Free Trial
+            Start Free Trial
           </button>
-          <p className="text-xs text-muted-foreground mt-4">
-            No credit card required.
-          </p>
         </motion.div>
       </div>
     </section>
