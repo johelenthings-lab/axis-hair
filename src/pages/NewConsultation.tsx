@@ -288,8 +288,9 @@ const NewConsultation = () => {
                 <Input type="datetime-local" value={appointmentDate} onChange={(e) => setAppointmentDate(e.target.value)} className="bg-background border-border" />
               </div>
               <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Price ($)</Label>
+                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Price ($) <span className="normal-case text-muted-foreground/60">(optional)</span></Label>
                 <Input type="number" min="0" step="0.01" value={estimatedPrice} onChange={(e) => setEstimatedPrice(e.target.value)} className="bg-background border-border" placeholder="0.00" />
+                <p className="text-xs text-muted-foreground/60">Enter your expected service total for this appointment. This will be used for revenue tracking.</p>
               </div>
             </div>
           </div>
