@@ -14,6 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      clients: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          stylist_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          phone?: string | null
+          stylist_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          stylist_id?: string
+        }
+        Relationships: []
+      }
+      consultations: {
+        Row: {
+          appointment_date: string | null
+          client_id: string
+          created_at: string
+          desired_length: string | null
+          estimated_price: number | null
+          face_shape: string | null
+          hair_texture: string | null
+          id: string
+          inspiration_notes: string | null
+          lifestyle: string | null
+          maintenance_level: string | null
+          status: string
+          stylist_id: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_date?: string | null
+          client_id: string
+          created_at?: string
+          desired_length?: string | null
+          estimated_price?: number | null
+          face_shape?: string | null
+          hair_texture?: string | null
+          id?: string
+          inspiration_notes?: string | null
+          lifestyle?: string | null
+          maintenance_level?: string | null
+          status?: string
+          stylist_id: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string | null
+          client_id?: string
+          created_at?: string
+          desired_length?: string | null
+          estimated_price?: number | null
+          face_shape?: string | null
+          hair_texture?: string | null
+          id?: string
+          inspiration_notes?: string | null
+          lifestyle?: string | null
+          maintenance_level?: string | null
+          status?: string
+          stylist_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
