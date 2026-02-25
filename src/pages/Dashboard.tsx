@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Plus, Clock, CheckCircle } from "lucide-react";
+import { LogOut, Plus, Users, Clock, CheckCircle } from "lucide-react";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 
 interface ConsultationRow {
@@ -35,7 +35,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [consultations, setConsultations] = useState<ConsultationRow[]>([]);
   const [loading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     fetchData();
@@ -66,6 +65,11 @@ const Dashboard = () => {
   const total = active.length;
   const approvedCount = active.filter((c) => c.status === "approved").length;
   const approvalRate = total > 0 ? Math.round((approvedCount / total) * 100) : 0;
+  const awaitingApproval = active.filter((c) => c.status === "awaiting_approval").length;
+  const upcoming = active.filter((c) => {
+    if (!c.appointment_date) return false;
+    return new Date(c.appointment_date) >= now;
+  }).length;
 
   const approvedWithPrice = consultations.filter(
     (c) => c.status === "approved" && c.estimated_price != null && c.appointment_date != null
@@ -97,11 +101,12 @@ const Dashboard = () => {
     { label: "Total Lifetime Revenue", value: fmt(lifetimeRevenue), sub: `${approvedWithPrice.length} approved` },
   ];
 
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
   };
+
+  const hasFocusData = thisWeek.length > 0 || awaitingApproval > 0 || upcoming > 0 || weeklyRevenue > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,31 +125,73 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Metrics */}
-      <section className="bg-accent text-accent-foreground">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
-          <h2 className="font-display text-xs tracking-[0.25em] uppercase text-accent-foreground/50 mb-8">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-10">
+
+        {/* 1️⃣ Today's Focus */}
+        <section className="bg-accent text-accent-foreground rounded-sm p-8 md:p-10">
+          <h2 className="font-display text-xs tracking-[0.25em] uppercase text-accent-foreground/50 mb-6">
+            Today's Focus
+          </h2>
+          {hasFocusData ? (
+            <ul className="space-y-2">
+              <li className="text-sm text-accent-foreground/80">
+                <span className="font-semibold text-accent-foreground">{thisWeek.length}</span> consultation{thisWeek.length !== 1 ? "s" : ""} this week
+              </li>
+              <li className="text-sm text-accent-foreground/80">
+                <span className="font-semibold text-accent-foreground">{awaitingApproval}</span> awaiting approval
+              </li>
+              <li className="text-sm text-accent-foreground/80">
+                <span className="font-semibold text-accent-foreground">{upcoming}</span> upcoming appointment{upcoming !== 1 ? "s" : ""}
+              </li>
+              <li className="text-sm text-accent-foreground/80">
+                Estimated revenue this week: <span className="font-semibold text-accent-foreground">{fmt(weeklyRevenue)}</span>
+              </li>
+            </ul>
+          ) : (
+            <p className="text-sm text-accent-foreground/60 italic">
+              You're clear for today. Time to grow.
+            </p>
+          )}
+        </section>
+
+        {/* 2️⃣ Quick Actions */}
+        <section className="flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={() => navigate("/consultation/new")}
+            className="flex-1 justify-start gap-3 bg-accent text-accent-foreground hover:opacity-90 h-13 tracking-[0.12em] uppercase text-xs font-semibold rounded-sm"
+          >
+            <Plus className="h-4 w-4" /> New Consultation
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 justify-start gap-3 h-13 tracking-[0.12em] uppercase text-xs border-border rounded-sm"
+          >
+            <Users className="h-4 w-4" /> View Clients
+          </Button>
+        </section>
+
+        {/* 3️⃣ Metrics — secondary emphasis */}
+        <section>
+          <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground/50 mb-6">
             Performance Overview
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 md:gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 md:gap-8">
             {metrics.map((m) => (
               <div key={m.label}>
-                <p className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">
+                <p className="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
                   {m.value}
                 </p>
-                <p className="text-xs tracking-[0.12em] uppercase text-accent-foreground/60 mt-2">
+                <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground mt-2">
                   {m.label}
                 </p>
-                <p className="text-xs text-accent-foreground/40 mt-1">{m.sub}</p>
+                <p className="text-xs text-muted-foreground/50 mt-1">{m.sub}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid lg:grid-cols-3 gap-10">
-        {/* Client Activity */}
-        <div className="lg:col-span-2">
+        {/* 4️⃣ Client Activity */}
+        <section>
           <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-6">
             Client Activity
           </h3>
@@ -185,17 +232,18 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Cancelled */}
+          {/* Cancelled — subtle */}
           {cancelled.length > 0 && (
             <div className="mt-8">
-              <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground/50 mb-4">
-                Cancelled ({cancelled.length})
+              <div className="h-px w-full bg-border/40 mb-6" />
+              <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground/40 mb-4">
+                Cancelled Appointments ({cancelled.length})
               </h3>
-              <div className="border border-border/50 rounded-sm overflow-hidden opacity-60">
+              <div className="border border-border/40 rounded-sm overflow-hidden opacity-50">
                 {cancelled.map((c) => (
                   <div
                     key={c.id}
-                    className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-3 border-b border-border/50 last:border-0 hover:bg-muted/10 transition-colors cursor-pointer"
+                    className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-3 border-b border-border/40 last:border-0 hover:bg-muted/10 transition-colors cursor-pointer"
                     onClick={() => navigate(`/client-view/${c.id}`)}
                   >
                     <span className="text-sm text-muted-foreground">
@@ -213,34 +261,7 @@ const Dashboard = () => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Quick Actions */}
-        <div>
-          <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-6">
-            Quick Actions
-          </h3>
-          <div className="space-y-3">
-            <Button
-              onClick={() => navigate("/consultation/new")}
-              className="w-full justify-start gap-3 bg-accent text-accent-foreground hover:opacity-90 h-12 tracking-[0.12em] uppercase text-xs font-semibold"
-            >
-              <Plus className="h-4 w-4" /> New Consultation
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-12 tracking-[0.12em] uppercase text-xs border-border"
-            >
-              <Clock className="h-4 w-4" /> View Client History
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-12 tracking-[0.12em] uppercase text-xs border-border"
-            >
-              <CheckCircle className="h-4 w-4" /> Pending Approvals
-            </Button>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
   );
