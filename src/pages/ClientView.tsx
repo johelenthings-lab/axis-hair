@@ -16,6 +16,7 @@ interface ConsultationData {
   status: string;
   estimated_price: number | null;
   appointment_date: string | null;
+  original_image_url: string | null;
   clients: { full_name: string } | null;
 }
 
@@ -39,7 +40,7 @@ const ClientView = () => {
     const fetch = async () => {
       const { data: row } = await supabase
         .from("consultations")
-        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, clients(full_name)")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, clients(full_name)")
         .eq("id", id!)
         .single();
       setData(row as ConsultationData | null);
@@ -99,17 +100,24 @@ const ClientView = () => {
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
               Style Preview
             </h2>
-            <div className="aspect-[3/4] bg-muted rounded-sm flex items-center justify-center border border-border">
-              <div className="text-center">
-                <div className="w-32 h-32 rounded-full bg-border mx-auto mb-4" />
-                <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground">
-                  Swipe preview area
-                </p>
-                <p className="text-xs text-muted-foreground/60 mt-1">
-                  Head + shoulders crop
-                </p>
+            {data.original_image_url ? (
+              <div className="aspect-[3/4] rounded-sm overflow-hidden border border-border">
+                <img
+                  src={data.original_image_url}
+                  alt={`${data.clients?.full_name ?? "Client"} photo`}
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
-            </div>
+            ) : (
+              <div className="aspect-[3/4] bg-muted rounded-sm flex items-center justify-center border border-border">
+                <div className="text-center">
+                  <div className="w-32 h-32 rounded-full bg-border mx-auto mb-4" />
+                  <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground">
+                    No photo uploaded
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="mt-4 flex items-center gap-3 justify-center">
               <div className="h-px flex-1 bg-border" />
               <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
