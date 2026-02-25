@@ -30,6 +30,7 @@ const NewConsultation = () => {
   const [inspirationNotes, setInspirationNotes] = useState("");
   const [estimatedPrice, setEstimatedPrice] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
+  const [serviceType, setServiceType] = useState("quick_service");
   const [clientPhoto, setClientPhoto] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,8 +39,8 @@ const NewConsultation = () => {
       toast({ title: "Client name is required", variant: "destructive" });
       return;
     }
-    if (!clientPhoto) {
-      toast({ title: "Client photo is required", variant: "destructive" });
+    if (serviceType === "full_preview" && !clientPhoto) {
+      toast({ title: "Client photo is required for full consultations", variant: "destructive" });
       return;
     }
 
@@ -70,6 +71,7 @@ const NewConsultation = () => {
       .insert({
         stylist_id: user.id,
         client_id: client.id,
+        service_type: serviceType,
         hair_texture: hairTexture || null,
         desired_length: desiredLength || null,
         face_shape: faceShape || null,
@@ -89,31 +91,33 @@ const NewConsultation = () => {
       return;
     }
 
-    // Upload client photo to storage
-    const fileExt = clientPhoto.name.split(".").pop() || "jpg";
-    const filePath = `${user.id}/${consultation.id}/original.${fileExt}`;
+    // Upload client photo to storage (if provided)
+    if (clientPhoto) {
+      const fileExt = clientPhoto.name.split(".").pop() || "jpg";
+      const filePath = `${user.id}/${consultation.id}/original.${fileExt}`;
 
-    const { error: uploadErr } = await supabase.storage
-      .from("consultation-images")
-      .upload(filePath, clientPhoto, { upsert: true });
+      const { error: uploadErr } = await supabase.storage
+        .from("consultation-images")
+        .upload(filePath, clientPhoto, { upsert: true });
 
-    if (uploadErr) {
-      toast({ title: "Failed to upload photo", description: uploadErr.message, variant: "destructive" });
-      setLoading(false);
-      return;
+      if (uploadErr) {
+        toast({ title: "Failed to upload photo", description: uploadErr.message, variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+
+      // Get signed URL (private bucket)
+      const { data: urlData } = await supabase.storage
+        .from("consultation-images")
+        .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year
+
+      // Update consultation with image URL
+      const imageUrl = urlData?.signedUrl || filePath;
+      await supabase
+        .from("consultations")
+        .update({ original_image_url: imageUrl })
+        .eq("id", consultation.id);
     }
-
-    // Get signed URL (private bucket)
-    const { data: urlData } = await supabase.storage
-      .from("consultation-images")
-      .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year
-
-    // Update consultation with image URL
-    const imageUrl = urlData?.signedUrl || filePath;
-    await supabase
-      .from("consultations")
-      .update({ original_image_url: imageUrl })
-      .eq("id", consultation.id);
 
     // Fire-and-forget AI recommendation generation
     supabase.functions.invoke("generate-recommendation", {
@@ -144,6 +148,23 @@ const NewConsultation = () => {
         </p>
 
         <div className="space-y-8">
+          {/* Service Type */}
+          <div>
+            <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
+              Service Type
+            </h2>
+            <div className="space-y-2">
+              <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Service Type *</Label>
+              <Select value={serviceType} onValueChange={setServiceType}>
+                <SelectTrigger className="bg-background border-border"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="quick_service">Quick Maintenance / Trim</SelectItem>
+                  <SelectItem value="full_preview">Full Style Consultation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           {/* Client Info */}
           <div>
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
@@ -276,7 +297,7 @@ const NewConsultation = () => {
           {/* Photo Upload */}
           <div>
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
-              Photo Upload
+              Photo Upload {serviceType === "quick_service" && <span className="normal-case text-muted-foreground/60">(optional)</span>}
             </h2>
             <div className="space-y-4">
               <input
@@ -304,7 +325,9 @@ const NewConsultation = () => {
                 ) : (
                   <>
                     <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-3" />
-                    <p className="text-sm font-medium text-foreground mb-1">Upload Client Photo *</p>
+                    <p className="text-sm font-medium text-foreground mb-1">
+                      Upload Client Photo {serviceType === "full_preview" ? "*" : ""}
+                    </p>
                     <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                       JPG or PNG. For best results, use natural lighting and face camera directly.
                     </p>
