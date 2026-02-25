@@ -73,6 +73,12 @@ const PublicPreview = () => {
     fetch();
   }, [consultationId]);
 
+  useEffect(() => {
+    if (data?.clients?.full_name) {
+      document.title = `${data.clients.full_name} — Style Preview | AXIS HAIR™`;
+    }
+  }, [data]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
