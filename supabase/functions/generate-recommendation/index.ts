@@ -34,7 +34,7 @@ serve(async (req) => {
 
     const val = (v: string | null) => v || "Not specified";
 
-    const prompt = You are a highly trusted personal stylist speaking directly to your client.
+    const prompt = (You are a highly trusted personal stylist speaking directly to your client.
 
 Based on the following client intake data:
 
@@ -67,7 +67,7 @@ The tone must feel warm, confident, and collaborative — not editorial, not cor
 
 Avoid emojis.
 Avoid magazine-style language.
-Keep it polished but relational.
+Keep it polished but relational.)
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
