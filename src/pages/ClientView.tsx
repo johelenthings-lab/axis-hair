@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ConsultationData {
@@ -37,6 +37,27 @@ const ClientView = () => {
   const [data, setData] = useState<ConsultationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+
+  const regenerateRecommendation = async () => {
+    setRegenerating(true);
+    const { error } = await supabase.functions.invoke("generate-recommendation", {
+      body: { consultation_id: id },
+    });
+    if (error) {
+      toast({ title: "Failed to regenerate recommendation", variant: "destructive" });
+    } else {
+      const { data: updated } = await supabase
+        .from("consultations")
+        .select("ai_recommendation, ai_generated_at")
+        .eq("id", id!)
+        .single();
+      if (updated) {
+        setData((prev) => prev ? { ...prev, ...updated } : prev);
+      }
+    }
+    setRegenerating(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -161,6 +182,14 @@ const ClientView = () => {
                       Generated {new Date(data.ai_generated_at).toLocaleDateString()}
                     </p>
                   )}
+                  <Button
+                    onClick={regenerateRecommendation}
+                    disabled={regenerating}
+                    className="mt-4 h-10 tracking-[0.12em] uppercase text-xs font-semibold"
+                  >
+                    {regenerating && <Loader2 className="h-3 w-3 animate-spin" />}
+                    {regenerating ? "Regenerating..." : "Regenerate Recommendation"}
+                  </Button>
                 </div>
               ) : (
                 <div className="border border-border rounded-sm p-6 bg-muted/30 flex items-center gap-3">
