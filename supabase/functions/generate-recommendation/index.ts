@@ -47,10 +47,12 @@ Inspiration Notes: ${val(consultation.inspiration_notes)}
 
 Write the recommendation in first-person voice as if you are preparing for their upcoming appointment.
 
-Open naturally with anticipation, such as:
+IMPORTANT: You MUST begin with a warm, anticipatory opening sentence that expresses genuine excitement about the client's visit. Examples:
 "When you come in, here's what I'd love to try…"
-or
 "I'm really excited about this direction for you…"
+"I've been thinking about your look and I can't wait to get started…"
+
+Do NOT open with any technical analysis, hair assessment, or data summary. Lead with warmth first, then naturally transition into the details.
 
 Address the client as "you."
 
