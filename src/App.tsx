@@ -9,6 +9,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import NewConsultation from "./pages/NewConsultation";
 import ClientView from "./pages/ClientView";
+import PublicPreview from "./pages/PublicPreview";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/consultation/new" element={<ProtectedRoute><NewConsultation /></ProtectedRoute>} />
           <Route path="/client-view/:id" element={<ProtectedRoute><ClientView /></ProtectedRoute>} />
+          <Route path="/preview/:consultationId" element={<PublicPreview />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
