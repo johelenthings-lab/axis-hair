@@ -49,18 +49,17 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <h1 className="font-display font-extrabold tracking-[0.35em] uppercase text-foreground text-6xl md:text-8xl lg:text-9xl mb-5">
+          <p className="font-display text-xs tracking-[0.3em] uppercase text-foreground/60 mb-6 font-semibold">
             AXIS HAIR™
+          </p>
+
+          <h1 className="font-display font-extrabold tracking-tight text-foreground text-4xl md:text-6xl lg:text-7xl mb-5 leading-[1.1]">
+            Run Smarter Consultations.
           </h1>
 
-          <div className="space-y-1 mb-7">
-            <p className="font-display text-xl md:text-2xl tracking-[0.1em] text-foreground/85">
-              Defined by structure.
-            </p>
-            <p className="font-display text-xl md:text-2xl tracking-[0.1em] text-foreground/85">
-              Designed for you.
-            </p>
-          </div>
+          <p className="text-base md:text-lg text-foreground/70 max-w-xl mb-10 leading-relaxed">
+            AI-powered consultation intelligence for modern stylists who want structure, confidence, and revenue clarity.
+          </p>
 
           {/* Animated divider */}
           <div className="w-0 animate-divider-expand h-px bg-foreground/30 mb-10 max-w-[200px]" />
@@ -70,13 +69,13 @@ const HeroSection = () => {
               onClick={() => navigate("/signup")}
               className="inline-block text-center text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-8 py-4 hover:opacity-90 transition-opacity font-semibold"
             >
-              Start as a Stylist
+              Start Free Trial
             </button>
             <a
-              href="#results"
+              href="#dashboard"
               className="inline-block text-center text-xs tracking-[0.15em] uppercase border-2 border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
             >
-              Preview Client Experience
+              View Demo
             </a>
           </div>
         </motion.div>
