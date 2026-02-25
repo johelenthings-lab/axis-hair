@@ -138,3 +138,52 @@ Do not change response format.
 Keep TypeScript clean.
 
 Preserve existing DB update logic.
+Refine the tone of the AI recommendation to feel relational and stylist-client centered instead of editorial.
+
+Update the main prompt instructions as follows:
+
+The recommendation should be written in first-person stylist voice.
+
+Address the client directly using "you".
+
+Make it feel conversational, collaborative, and exciting — like a stylist speaking to their client before their appointment.
+
+Keep the same structured sections internally:
+
+Structure
+
+Styling Direction
+
+Maintenance Plan
+
+Optional Upgrade
+
+Professional Justification
+
+However, do NOT label sections in all caps inside the narrative.
+
+Instead, naturally transition between ideas using stylist language such as:
+
+"When you come in..."
+
+"Here’s what I’m thinking..."
+
+"I’d love to try..."
+
+"This will really complement..."
+
+"To keep it looking fresh..."
+
+Keep tone confident and professional.
+
+Avoid fluff.
+
+Avoid emojis.
+
+Avoid overly corporate language.
+
+The result should feel warm, personalized, and anticipatory while still structured and high-level.
+
+Do not modify database logic.
+Do not modify response format storage.
+Only adjust tone and section formatting.  
