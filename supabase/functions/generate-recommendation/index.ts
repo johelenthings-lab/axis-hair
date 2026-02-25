@@ -21,10 +21,9 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Fetch consultation data
     const { data: consultation, error: fetchErr } = await supabase
       .from("consultations")
-      .select("hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes")
+      .select("hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, ai_recommendation")
       .eq("id", consultation_id)
       .single();
 
@@ -32,9 +31,10 @@ serve(async (req) => {
       throw new Error(`Failed to fetch consultation: ${fetchErr?.message}`);
     }
 
+    const isRegeneration = consultation.ai_recommendation != null;
     const val = (v: string | null) => v || "Not specified";
 
-    const prompt = (You are a highly trusted personal stylist speaking directly to your client.
+    let prompt = `You are a highly trusted personal stylist speaking directly to your client.
 
 Based on the following client intake data:
 
@@ -48,11 +48,11 @@ Inspiration Notes: ${val(consultation.inspiration_notes)}
 Write the recommendation in first-person voice as if you are preparing for their upcoming appointment.
 
 Open naturally with anticipation, such as:
-“When you come in, here’s what I’d love to try…”
+"When you come in, here's what I'd love to try…"
 or
-“I’m really excited about this direction for you…”
+"I'm really excited about this direction for you…"
 
-Address the client as “you.”
+Address the client as "you."
 
 Blend structure naturally into the conversation without using uppercase section headers.
 
@@ -67,7 +67,11 @@ The tone must feel warm, confident, and collaborative — not editorial, not cor
 
 Avoid emojis.
 Avoid magazine-style language.
-Keep it polished but relational.)
+Keep it polished but relational.`;
+
+    if (isRegeneration) {
+      prompt += `\n\nProvide a distinctly different structural and aesthetic approach than any previous recommendation for this consultation. Do not repeat structure, direction, or phrasing.`;
+    }
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -93,7 +97,6 @@ Keep it polished but relational.)
 
     if (!recommendation) throw new Error("No recommendation content in AI response");
 
-    // Save to database
     const { error: updateErr } = await supabase
       .from("consultations")
       .update({
@@ -115,79 +118,3 @@ Keep it polished but relational.)
     );
   }
 });
-Update the generate-recommendation edge function to improve variation behavior.
-
-Inside the existing prompt string, modify it so that:
-
-If ai_recommendation already exists for this consultation, append the following instruction to the prompt:
-
-"Provide a distinctly different structural and aesthetic approach than any previous recommendation for this consultation. Do not repeat structure, direction, or phrasing."
-
-Implementation requirements:
-
-Before building the prompt, fetch ai_recommendation from the consultation record.
-
-If ai_recommendation is not null:
-
-Add a boolean flag isRegeneration = true
-
-When building the prompt:
-
-If isRegeneration is true, append the variation instruction at the end of the prompt.
-
-Do not modify the frontend.
-
-Do not change response format.
-
-Keep TypeScript clean.
-
-Preserve existing DB update logic.
-Refine the tone of the AI recommendation to feel relational and stylist-client centered instead of editorial.
-
-Update the main prompt instructions as follows:
-
-The recommendation should be written in first-person stylist voice.
-
-Address the client directly using "you".
-
-Make it feel conversational, collaborative, and exciting — like a stylist speaking to their client before their appointment.
-
-Keep the same structured sections internally:
-
-Structure
-
-Styling Direction
-
-Maintenance Plan
-
-Optional Upgrade
-
-Professional Justification
-
-However, do NOT label sections in all caps inside the narrative.
-
-Instead, naturally transition between ideas using stylist language such as:
-
-"When you come in..."
-
-"Here’s what I’m thinking..."
-
-"I’d love to try..."
-
-"This will really complement..."
-
-"To keep it looking fresh..."
-
-Keep tone confident and professional.
-
-Avoid fluff.
-
-Avoid emojis.
-
-Avoid overly corporate language.
-
-The result should feel warm, personalized, and anticipatory while still structured and high-level.
-
-Do not modify database logic.
-Do not modify response format storage.
-Only adjust tone and section formatting.  
