@@ -23,7 +23,7 @@ serve(async (req) => {
 
     const { data: consultation, error: fetchErr } = await supabase
       .from("consultations")
-      .select("hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, ai_recommendation")
+      .select("hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, service_type, ai_recommendation")
       .eq("id", consultation_id)
       .single();
 
@@ -34,7 +34,18 @@ serve(async (req) => {
     const isRegeneration = consultation.ai_recommendation != null;
     const val = (v: string | null) => v || "Not specified";
 
-    let prompt = `You are a highly trusted personal stylist speaking directly to your client.
+    const introTone = consultation.service_type === "quick_service"
+      ? `You are a highly trusted personal stylist speaking to your returning client.
+This is a maintenance visit, not a transformation.
+Write the recommendation in a warm, supportive tone focused on refinement, polish, and upkeep.
+Open with something like:
+"When you come in, we'll refine what you already love about your current look..."`
+      : `You are a highly trusted personal stylist preparing for a transformation consultation.
+Write the recommendation in first-person voice with excitement and anticipation.
+Open with something like:
+"When you come in, here's what I'd love to try..."`;
+
+    let prompt = `${introTone}
 
 Based on the following client intake data:
 
@@ -45,31 +56,20 @@ Maintenance Level: ${val(consultation.maintenance_level)}
 Lifestyle: ${val(consultation.lifestyle)}
 Inspiration Notes: ${val(consultation.inspiration_notes)}
 
-Write the recommendation in first-person voice as if you are preparing for their upcoming appointment.
-
-IMPORTANT: You MUST begin with a warm, anticipatory opening sentence that expresses genuine excitement about the client's visit. Examples:
-"When you come in, here's what I'd love to try…"
-"I'm really excited about this direction for you…"
-"I've been thinking about your look and I can't wait to get started…"
-
-Do NOT open with any technical analysis, hair assessment, or data summary. Lead with warmth first, then naturally transition into the details.
-
 Address the client as "you."
 
-Blend structure naturally into the conversation without using uppercase section headers.
+Blend structure naturally into conversation without uppercase section headers.
 
 Cover:
-• The structure and cut direction
-• The styling approach
-• The maintenance plan
-• An optional upgrade suggestion
-• A professional justification tailored to their face shape and texture
+• Structure and cut direction
+• Styling approach
+• Maintenance plan
+• Optional upgrade suggestion (if appropriate)
+• Professional reasoning
 
-The tone must feel warm, confident, and collaborative — not editorial, not corporate, not academic.
-
+Keep tone polished, warm, and relational.
 Avoid emojis.
-Avoid magazine-style language.
-Keep it polished but relational.`;
+Avoid editorial language.`;
 
     if (isRegeneration) {
       prompt += `\n\nProvide a distinctly different structural and aesthetic approach than any previous recommendation for this consultation. Do not repeat structure, direction, or phrasing.`;
