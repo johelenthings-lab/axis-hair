@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
+import AIRecommendation from "@/components/AIRecommendation";
 
 interface ConsultationData {
   id: string;
@@ -39,26 +40,9 @@ const ClientView = () => {
   const [data, setData] = useState<ConsultationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [regenerating, setRegenerating] = useState(false);
 
-  const regenerateRecommendation = async () => {
-    setRegenerating(true);
-    const { error } = await supabase.functions.invoke("generate-recommendation", {
-      body: { consultation_id: id },
-    });
-    if (error) {
-      toast({ title: "Failed to regenerate recommendation", variant: "destructive" });
-    } else {
-      const { data: updated } = await supabase
-        .from("consultations")
-        .select("ai_recommendation, ai_generated_at")
-        .eq("id", id!)
-        .single();
-      if (updated) {
-        setData((prev) => prev ? { ...prev, ...updated } : prev);
-      }
-    }
-    setRegenerating(false);
+  const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
+    setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
   };
 
   useEffect(() => {
@@ -70,26 +54,8 @@ const ClientView = () => {
         .single();
       setData(row as ConsultationData | null);
       setLoading(false);
-      return row as ConsultationData | null;
     };
-    fetchData().then((row) => {
-      // Poll for AI recommendation if not yet generated
-      if (row && !row.ai_recommendation) {
-        const interval = setInterval(async () => {
-          const { data: updated } = await supabase
-            .from("consultations")
-            .select("ai_recommendation, ai_generated_at")
-            .eq("id", id!)
-            .single();
-          if (updated?.ai_recommendation) {
-            setData((prev) => prev ? { ...prev, ...updated } : prev);
-            clearInterval(interval);
-          }
-        }, 3000);
-        // Stop polling after 60s
-        setTimeout(() => clearInterval(interval), 60000);
-      }
-    });
+    fetchData();
   }, [id]);
 
   const updateStatus = async (status: string) => {
@@ -162,43 +128,12 @@ const ClientView = () => {
               <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
                 Professional Recommendation
               </h2>
-              {data.ai_recommendation ? (
-                <div className="border border-border rounded-sm p-6 bg-muted/30">
-                  <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-                    {data.ai_recommendation}
-                  </div>
-                  {data.ai_generated_at && (
-                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-4">
-                      Generated {new Date(data.ai_generated_at).toLocaleDateString()}
-                    </p>
-                  )}
-                  <Button
-                    onClick={regenerateRecommendation}
-                    disabled={regenerating}
-                    className="mt-4 h-10 tracking-[0.12em] uppercase text-xs font-semibold"
-                  >
-                    {regenerating && <Loader2 className="h-3 w-3 animate-spin" />}
-                    {regenerating ? "Regenerating..." : "Regenerate Recommendation"}
-                  </Button>
-                </div>
-              ) : (
-                <div className="border border-border rounded-sm p-6 bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    {!regenerating && <div className="h-3 w-3 rounded-full bg-accent animate-pulse" />}
-                    <span className="text-sm text-muted-foreground">
-                      {regenerating ? "Generating recommendation…" : "No recommendation yet."}
-                    </span>
-                  </div>
-                  <Button
-                    onClick={regenerateRecommendation}
-                    disabled={regenerating}
-                    className="mt-4 h-10 tracking-[0.12em] uppercase text-xs font-semibold"
-                  >
-                    {regenerating && <Loader2 className="h-3 w-3 animate-spin" />}
-                    {regenerating ? "Generating..." : "Generate Recommendation"}
-                  </Button>
-                </div>
-              )}
+              <AIRecommendation
+                consultationId={data.id}
+                initialRecommendation={data.ai_recommendation}
+                initialGeneratedAt={data.ai_generated_at}
+                onUpdate={handleRecommendationUpdate}
+              />
             </div>
           </div>
 
