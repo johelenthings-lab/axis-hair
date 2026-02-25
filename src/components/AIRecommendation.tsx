@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIRecommendationProps {
@@ -12,6 +11,46 @@ interface AIRecommendationProps {
 }
 
 type Status = "idle" | "generating" | "done" | "error";
+
+const SECTION_HEADERS = [
+  "STRUCTURE RECOMMENDATION:",
+  "STYLING DIRECTION:",
+  "MAINTENANCE PLAN:",
+  "OPTIONAL UPGRADE:",
+  "PROFESSIONAL JUSTIFICATION:",
+];
+
+const formatRecommendation = (text: string) => {
+  // Split by known section headers while keeping them
+  const pattern = new RegExp(
+    `(${SECTION_HEADERS.map((h) => h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`,
+    "g"
+  );
+  const parts = text.split(pattern).filter(Boolean);
+
+  return parts.map((part, i) => {
+    const isHeader = SECTION_HEADERS.some(
+      (h) => part.trim().toUpperCase() === h || part.trim() === h
+    );
+
+    if (isHeader) {
+      return (
+        <h4
+          key={i}
+          className="font-display text-[13px] tracking-[0.2em] uppercase text-accent font-semibold mt-6 first:mt-0 mb-2"
+        >
+          {part.replace(/:$/, "")}
+        </h4>
+      );
+    }
+
+    return (
+      <p key={i} className="text-sm text-foreground leading-relaxed whitespace-pre-line">
+        {part.trim()}
+      </p>
+    );
+  });
+};
 
 const AIRecommendation = ({
   consultationId,
@@ -25,6 +64,7 @@ const AIRecommendation = ({
   const [status, setStatus] = useState<Status>(
     initialRecommendation ? "done" : "idle"
   );
+  const [revealed, setRevealed] = useState(!!initialRecommendation);
   const autoTriggered = useRef(false);
 
   // Sync props when parent updates
@@ -33,6 +73,8 @@ const AIRecommendation = ({
       setRecommendation(initialRecommendation);
       setGeneratedAt(initialGeneratedAt);
       setStatus("done");
+      // Small delay so the DOM renders before triggering the transition
+      requestAnimationFrame(() => setRevealed(true));
     }
   }, [initialRecommendation, initialGeneratedAt]);
 
@@ -46,6 +88,7 @@ const AIRecommendation = ({
   }, []);
 
   const generate = async () => {
+    setRevealed(false);
     setStatus("generating");
 
     const { error } = await supabase.functions.invoke(
@@ -78,9 +121,9 @@ const AIRecommendation = ({
         setGeneratedAt(data.ai_generated_at);
         setStatus("done");
         onUpdate(data.ai_recommendation, data.ai_generated_at!);
+        requestAnimationFrame(() => setRevealed(true));
       } else if (attempts >= 20) {
         clearInterval(poll);
-        // Check one final time
         const { data: final } = await supabase
           .from("consultations")
           .select("ai_recommendation, ai_generated_at")
@@ -92,6 +135,7 @@ const AIRecommendation = ({
           setGeneratedAt(final.ai_generated_at);
           setStatus("done");
           onUpdate(final.ai_recommendation, final.ai_generated_at!);
+          requestAnimationFrame(() => setRevealed(true));
         } else {
           setStatus("error");
         }
@@ -103,7 +147,6 @@ const AIRecommendation = ({
     return (
       <div className="border border-border rounded-sm p-8 bg-muted/30">
         <div className="flex flex-col items-center text-center gap-4 py-4">
-          {/* Subtle animated bars */}
           <div className="flex items-end gap-1 h-6">
             {[0, 1, 2, 3, 4].map((i) => (
               <div
@@ -149,18 +192,21 @@ const AIRecommendation = ({
 
   if (status === "done" && recommendation) {
     return (
-      <div className="border border-border rounded-sm p-6 bg-muted/30">
-        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-          {recommendation}
-        </div>
+      <div
+        className="border border-border rounded-sm p-6 bg-muted/30 transition-all duration-300 ease-out"
+        style={{
+          opacity: revealed ? 1 : 0,
+          transform: revealed ? "translateY(0)" : "translateY(8px)",
+        }}
+      >
+        <div>{formatRecommendation(recommendation)}</div>
         {generatedAt && (
-          <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-4">
-            Generated {new Date(generatedAt).toLocaleDateString()}
+          <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-6 pt-4 border-t border-border">
+            Generated {new Date(generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
           </p>
         )}
         <Button
           onClick={generate}
-          disabled={status !== "done"}
           className="mt-4 h-10 tracking-[0.12em] uppercase text-xs font-semibold"
         >
           Regenerate Recommendation
@@ -169,7 +215,7 @@ const AIRecommendation = ({
     );
   }
 
-  // Fallback idle state (shouldn't normally show due to auto-trigger)
+  // Fallback idle state
   return (
     <div className="border border-border rounded-sm p-6 bg-muted/30">
       <div className="flex items-center gap-3">
