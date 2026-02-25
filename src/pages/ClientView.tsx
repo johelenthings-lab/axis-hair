@@ -41,9 +41,34 @@ const ClientView = () => {
   const [data, setData] = useState<ConsultationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
     setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!data) return;
+    setGeneratingPdf(true);
+    try {
+      await generateConsultationPdf({
+        clientName: data.clients?.full_name ?? "Client",
+        hairTexture: display(data.hair_texture),
+        desiredLength: display(data.desired_length),
+        faceShape: display(data.face_shape),
+        maintenanceLevel: display(data.maintenance_level),
+        lifestyle: display(data.lifestyle),
+        estimatedPrice: data.estimated_price != null ? `$${data.estimated_price}` : "—",
+        recommendation: data.ai_recommendation,
+        generatedAt: data.ai_generated_at,
+        originalImageUrl: data.original_image_url,
+        previewImageUrl: data.preview_image_url,
+      });
+    } catch {
+      toast({ title: "Failed to generate PDF", variant: "destructive" });
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
 
   useEffect(() => {
