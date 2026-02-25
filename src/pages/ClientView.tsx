@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SwipeReveal from "@/components/SwipeReveal";
 
 interface ConsultationData {
   id: string;
@@ -17,6 +18,7 @@ interface ConsultationData {
   estimated_price: number | null;
   appointment_date: string | null;
   original_image_url: string | null;
+  preview_image_url: string | null;
   ai_recommendation: string | null;
   ai_generated_at: string | null;
   clients: { full_name: string } | null;
@@ -63,7 +65,7 @@ const ClientView = () => {
     const fetchData = async () => {
       const { data: row } = await supabase
         .from("consultations")
-        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, preview_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
         .eq("id", id!)
         .single();
       setData(row as ConsultationData | null);
@@ -141,24 +143,12 @@ const ClientView = () => {
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
               Style Preview
             </h2>
-            {data.original_image_url ? (
-              <div className="aspect-[3/4] rounded-sm overflow-hidden border border-border">
-                <img
-                  src={data.original_image_url}
-                  alt={`${data.clients?.full_name ?? "Client"} photo`}
-                  className="w-full h-full object-cover object-top"
-                />
-              </div>
-            ) : (
-              <div className="aspect-[3/4] bg-muted rounded-sm flex items-center justify-center border border-border">
-                <div className="text-center">
-                  <div className="w-32 h-32 rounded-full bg-border mx-auto mb-4" />
-                  <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground">
-                    No photo uploaded
-                  </p>
-                </div>
-              </div>
-            )}
+            <SwipeReveal
+              beforeUrl={data.original_image_url}
+              afterUrl={data.preview_image_url ?? undefined}
+              beforeLabel="Original"
+              afterLabel="Preview"
+            />
             <div className="mt-4 flex items-center gap-3 justify-center">
               <div className="h-px flex-1 bg-border" />
               <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
