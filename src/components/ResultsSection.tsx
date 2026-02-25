@@ -58,10 +58,10 @@ const ResultsSection = () => {
             </div>
           </div>
           <div className="flex gap-4">
-            <button className="flex-1 text-xs tracking-[0.15em] uppercase bg-primary text-primary-foreground px-6 py-3.5 hover:opacity-90 transition-opacity font-medium">
+            <button className="flex-1 text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-6 py-3.5 hover:opacity-90 transition-opacity font-semibold">
               Approve This Look
             </button>
-            <button className="flex-1 text-xs tracking-[0.15em] uppercase border border-foreground text-foreground px-6 py-3.5 hover:bg-foreground hover:text-background transition-all duration-300 font-medium">
+            <button className="flex-1 text-xs tracking-[0.15em] uppercase border-2 border-foreground text-foreground px-6 py-3.5 hover:bg-foreground hover:text-background transition-all duration-300 font-medium">
               Request Adjustment
             </button>
           </div>

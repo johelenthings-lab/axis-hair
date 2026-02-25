@@ -36,7 +36,7 @@ const HeroSection = () => {
       </AnimatePresence>
 
       {/* Ivory overlay */}
-      <div className="absolute inset-0 bg-axis-ivory/70" />
+      <div className="absolute inset-0 bg-axis-ivory/75" />
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
@@ -45,7 +45,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <h1 className="font-display font-bold tracking-[0.25em] uppercase text-foreground text-4xl md:text-6xl lg:text-7xl mb-8">
+          <h1 className="font-display font-bold tracking-[0.3em] uppercase text-foreground text-5xl md:text-7xl lg:text-8xl mb-8">
             AXIS HAIR™
           </h1>
 
@@ -64,15 +64,15 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href="#upload"
-              className="inline-block text-center text-xs tracking-[0.15em] uppercase bg-primary text-primary-foreground px-8 py-4 hover:opacity-90 transition-opacity font-medium"
+              className="inline-block text-center text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-8 py-4 hover:opacity-90 transition-opacity font-semibold"
             >
-              Start Your Consultation
+              Start as a Stylist
             </a>
             <a
-              href="#platform"
-              className="inline-block text-center text-xs tracking-[0.15em] uppercase border border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
+              href="#results"
+              className="inline-block text-center text-xs tracking-[0.15em] uppercase border-2 border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
             >
-              Explore the Platform
+              Preview Client Experience
             </a>
           </div>
         </motion.div>

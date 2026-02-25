@@ -36,10 +36,10 @@ const PricingSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="border-2 rounded-sm p-10 md:p-12 text-center"
-          style={{ borderColor: "hsl(var(--axis-charcoal))" }}
+          className="border-2 rounded-sm p-10 md:p-12 text-center shadow-lg"
+          style={{ borderColor: "hsl(var(--axis-charcoal))", boxShadow: "0 8px 40px -12px hsl(var(--axis-charcoal) / 0.2)" }}
         >
-          <p className="font-display font-bold text-6xl md:text-7xl tracking-tight text-foreground mb-2">
+          <p className="font-display font-extrabold text-7xl md:text-8xl tracking-tight text-foreground mb-2">
             $79
           </p>
           <p className="text-sm text-muted-foreground tracking-[0.1em] uppercase mb-10">
@@ -57,7 +57,7 @@ const PricingSection = () => {
             ))}
           </div>
 
-          <button className="w-full text-xs tracking-[0.15em] uppercase bg-primary text-primary-foreground px-8 py-4 hover:opacity-90 transition-opacity font-medium">
+          <button className="w-full text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-8 py-4 hover:opacity-90 transition-opacity font-semibold">
             Start 14-Day Free Trial
           </button>
           <p className="text-xs text-muted-foreground mt-4">

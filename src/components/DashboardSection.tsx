@@ -14,6 +14,7 @@ const DashboardSection = () => {
 
   return (
     <section
+      id="dashboard"
       ref={ref}
       className="py-28 md:py-36 bg-axis-dashboard axis-grid-bg-dark"
     >
@@ -45,7 +46,7 @@ const DashboardSection = () => {
               }}
             >
               <p
-                className="font-display font-bold text-4xl md:text-5xl tracking-tight mb-2"
+                className="font-display font-extrabold text-4xl md:text-6xl tracking-tight mb-2"
                 style={{ color: "hsl(var(--axis-dashboard-fg))" }}
               >
                 {stat.value}
