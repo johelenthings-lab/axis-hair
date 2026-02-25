@@ -243,6 +243,8 @@ const ClientView = () => {
               </Button>
             </div>
           </div>
+        </div>
+      </div>
     </div>
   );
 };
