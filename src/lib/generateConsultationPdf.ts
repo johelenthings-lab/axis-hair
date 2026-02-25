@@ -8,6 +8,7 @@ interface PdfData {
   maintenanceLevel: string;
   lifestyle: string;
   estimatedPrice: string;
+  estimatedDuration: string | null;
   recommendation: string | null;
   generatedAt: string | null;
   originalImageUrl: string | null;
@@ -123,6 +124,7 @@ export const generateConsultationPdf = async (data: PdfData) => {
     ["Maintenance Level", data.maintenanceLevel],
     ["Lifestyle", data.lifestyle],
     ["Estimated Cost", data.estimatedPrice],
+    ...(data.estimatedDuration ? [["Estimated Duration", data.estimatedDuration] as [string, string]] : []),
   ];
 
   const valueX = PAGE_WIDTH - MARGIN;

@@ -1,0 +1,1 @@
+ALTER TABLE public.consultations ADD COLUMN estimated_duration_minutes integer;

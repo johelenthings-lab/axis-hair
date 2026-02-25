@@ -49,6 +49,7 @@ export type Database = {
           client_id: string
           created_at: string
           desired_length: string | null
+          estimated_duration_minutes: number | null
           estimated_price: number | null
           face_shape: string | null
           hair_texture: string | null
@@ -70,6 +71,7 @@ export type Database = {
           client_id: string
           created_at?: string
           desired_length?: string | null
+          estimated_duration_minutes?: number | null
           estimated_price?: number | null
           face_shape?: string | null
           hair_texture?: string | null
@@ -91,6 +93,7 @@ export type Database = {
           client_id?: string
           created_at?: string
           desired_length?: string | null
+          estimated_duration_minutes?: number | null
           estimated_price?: number | null
           face_shape?: string | null
           hair_texture?: string | null
