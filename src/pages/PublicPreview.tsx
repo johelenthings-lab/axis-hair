@@ -9,6 +9,7 @@ interface PreviewData {
   ai_generated_at: string | null;
   original_image_url: string | null;
   preview_image_url: string | null;
+  estimated_duration_minutes: number | null;
   clients: { full_name: string } | null;
 }
 
@@ -59,7 +60,7 @@ const PublicPreview = () => {
     const fetch = async () => {
       const { data: row, error } = await supabase
         .from("consultations")
-        .select("id, ai_recommendation, ai_generated_at, original_image_url, preview_image_url, clients(full_name)")
+        .select("id, ai_recommendation, ai_generated_at, original_image_url, preview_image_url, estimated_duration_minutes, clients(full_name)")
         .eq("id", consultationId!)
         .maybeSingle();
 
@@ -111,6 +112,9 @@ const PublicPreview = () => {
         </h1>
         <p className="text-xs tracking-[0.12em] uppercase text-muted-foreground mb-10">
           Style Consultation Preview
+          {data.estimated_duration_minutes != null && (
+            <span className="ml-4 text-foreground/70">— {data.estimated_duration_minutes} min</span>
+          )}
         </p>
 
         <div className="grid lg:grid-cols-2 gap-10">

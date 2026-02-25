@@ -31,6 +31,7 @@ const NewConsultation = () => {
   const [estimatedPrice, setEstimatedPrice] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [serviceType, setServiceType] = useState("quick_service");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
   const [clientPhoto, setClientPhoto] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,6 +80,7 @@ const NewConsultation = () => {
         lifestyle: lifestyle || null,
         inspiration_notes: inspirationNotes || null,
         estimated_price: estimatedPrice ? parseFloat(estimatedPrice) : null,
+        estimated_duration_minutes: estimatedDuration ? parseInt(estimatedDuration, 10) : null,
         appointment_date: appointmentDate || null,
         status: "photo_uploaded",
       })
@@ -315,6 +317,11 @@ const NewConsultation = () => {
                 <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Price ($) <span className="normal-case text-muted-foreground/60">(optional)</span></Label>
                 <Input type="number" min="0" step="0.01" value={estimatedPrice} onChange={(e) => setEstimatedPrice(e.target.value)} className="bg-background border-border" placeholder="0.00" />
                 <p className="text-xs text-muted-foreground/60">Enter your expected service total for this appointment. This will be used for revenue tracking.</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Duration (Minutes) <span className="normal-case text-muted-foreground/60">(optional)</span></Label>
+                <Input type="number" min="0" step="5" value={estimatedDuration} onChange={(e) => setEstimatedDuration(e.target.value)} className="bg-background border-border" placeholder="e.g. 60" />
+                <p className="text-xs text-muted-foreground/60">Approximate time required for this appointment.</p>
               </div>
             </div>
           </div>

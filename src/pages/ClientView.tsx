@@ -39,6 +39,7 @@ interface ConsultationData {
   preview_image_url: string | null;
   ai_recommendation: string | null;
   ai_generated_at: string | null;
+  estimated_duration_minutes: number | null;
   clients: { full_name: string } | null;
 }
 
@@ -80,6 +81,7 @@ const ClientView = () => {
         maintenanceLevel: display(data.maintenance_level),
         lifestyle: display(data.lifestyle),
         estimatedPrice: data.estimated_price != null ? `$${data.estimated_price}` : "—",
+        estimatedDuration: data.estimated_duration_minutes != null ? `${data.estimated_duration_minutes} minutes` : null,
         recommendation: data.ai_recommendation,
         generatedAt: data.ai_generated_at,
         originalImageUrl: data.original_image_url,
@@ -96,7 +98,7 @@ const ClientView = () => {
     const fetchData = async () => {
       const { data: row } = await supabase
         .from("consultations")
-        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, preview_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, estimated_duration_minutes, appointment_date, original_image_url, preview_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
         .eq("id", id!)
         .single();
       setData(row as ConsultationData | null);
@@ -304,6 +306,12 @@ const ClientView = () => {
                     </div>
                   )}
                 </div>
+                {data.estimated_duration_minutes != null && (
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Duration</span>
+                    <span className="text-sm text-foreground">{data.estimated_duration_minutes} minutes</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center min-h-[32px]">
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Appointment</span>
                   {data.status === "cancelled" ? (
