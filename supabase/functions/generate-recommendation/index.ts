@@ -34,7 +34,7 @@ serve(async (req) => {
 
     const val = (v: string | null) => v || "Not specified";
 
-    const prompt = `You are a senior professional stylist working inside a premium consultation platform.
+    const prompt = You are a highly trusted personal stylist speaking directly to your client.
 
 Based on the following client intake data:
 
@@ -44,8 +44,6 @@ Face Shape: ${val(consultation.face_shape)}
 Maintenance Level: ${val(consultation.maintenance_level)}
 Lifestyle: ${val(consultation.lifestyle)}
 Inspiration Notes: ${val(consultation.inspiration_notes)}
-
-You are a highly trusted personal stylist speaking directly to your client.
 
 Write the recommendation in first-person voice as if you are preparing for their upcoming appointment.
 
@@ -65,13 +63,10 @@ Cover:
 • An optional upgrade suggestion
 • A professional justification tailored to their face shape and texture
 
-Transitions should feel natural and personal.
-
 The tone must feel warm, confident, and collaborative — not editorial, not corporate, not academic.
 
 Avoid emojis.
 Avoid magazine-style language.
-Avoid rigid formatting labels.
 Keep it polished but relational.
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
