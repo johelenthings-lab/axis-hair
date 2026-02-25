@@ -147,12 +147,22 @@ const Dashboard = () => {
                   ? <><span className="font-semibold text-accent-foreground">{awaitingApproval}</span> consultation{awaitingApproval !== 1 ? "s" : ""} require{awaitingApproval === 1 ? "s" : ""} your approval.</>
                   : "No consultations require approval."}
               </li>
+              {awaitingApproval > 0 && (
+                <li className="text-sm text-accent-foreground/50">
+                  Review pending consultations to keep your schedule moving.
+                </li>
+              )}
               <li className="text-sm text-accent-foreground/80">
                 You have <span className="font-semibold text-accent-foreground">{upcoming}</span> upcoming appointment{upcoming !== 1 ? "s" : ""}.
               </li>
               <li className="text-sm text-accent-foreground/80">
                 Estimated revenue on schedule this week: <span className="font-semibold text-accent-foreground">{fmt(weeklyRevenue)}</span>.
               </li>
+              {weeklyRevenue === 0 && (
+                <li className="text-sm text-accent-foreground/50">
+                  No approved appointments yet this week. Confirm consultations to activate revenue tracking.
+                </li>
+              )}
             </ul>
           ) : (
             <p className="text-sm text-accent-foreground/60 italic">
@@ -214,8 +224,22 @@ const Dashboard = () => {
                 <span className="text-sm text-muted-foreground animate-pulse">Loading...</span>
               </div>
             ) : active.length === 0 ? (
-              <div className="px-6 py-8 text-center">
-                <span className="text-sm text-muted-foreground">No active consultations. Create your first one.</span>
+              <div className="px-8 py-16 text-center space-y-4">
+                <h3 className="font-display text-lg font-semibold tracking-[0.05em] text-foreground">
+                  You're Ready to Begin.
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  Start your first consultation to see client previews, AI recommendations, and revenue tracking in action.
+                </p>
+                <Button
+                  onClick={() => navigate("/consultation/new")}
+                  className="mt-2 bg-accent text-accent-foreground hover:opacity-90 tracking-[0.12em] uppercase text-xs font-semibold rounded-sm"
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Create First Consultation
+                </Button>
+                <p className="text-xs text-muted-foreground/50 mt-4">
+                  Most stylists begin with an existing client.
+                </p>
               </div>
             ) : (
               active.map((c) => (
