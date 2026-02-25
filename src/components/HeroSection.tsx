@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import salon1 from "@/assets/salon-1.jpg";
 import salon2 from "@/assets/salon-2.jpg";
@@ -7,6 +8,7 @@ import salon3 from "@/assets/salon-3.jpg";
 const images = [salon1, salon2, salon3];
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -64,12 +66,12 @@ const HeroSection = () => {
           <div className="w-0 animate-divider-expand h-px bg-foreground/30 mb-10 max-w-[200px]" />
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#upload"
+            <button
+              onClick={() => navigate("/signup")}
               className="inline-block text-center text-xs tracking-[0.15em] uppercase bg-accent text-accent-foreground px-8 py-4 hover:opacity-90 transition-opacity font-semibold"
             >
               Start as a Stylist
-            </a>
+            </button>
             <a
               href="#results"
               className="inline-block text-center text-xs tracking-[0.15em] uppercase border-2 border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
