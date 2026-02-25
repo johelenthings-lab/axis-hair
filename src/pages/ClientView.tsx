@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Link2, Pencil, Check, X } from "lucide-react";
+import { ArrowLeft, Download, Link2, Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
@@ -56,6 +56,7 @@ const ClientView = () => {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [editingPrice, setEditingPrice] = useState(false);
   const [priceInput, setPriceInput] = useState("");
+  const [priceConfirm, setPriceConfirm] = useState(false);
 
   const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
     setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
@@ -224,9 +225,11 @@ const ClientView = () => {
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Lifestyle</span>
                   <span className="text-sm text-foreground">{display(data.lifestyle)}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center min-h-[32px]">
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Cost</span>
-                  {editingPrice ? (
+                  {data.status === "cancelled" ? (
+                    <span className="text-xs text-muted-foreground/50 italic">Restore appointment to modify pricing.</span>
+                  ) : editingPrice ? (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">$</span>
                       <Input
@@ -235,6 +238,9 @@ const ClientView = () => {
                         step="0.01"
                         value={priceInput}
                         onChange={(e) => setPriceInput(e.target.value)}
+                        onBlur={() => {
+                          if (priceInput) setPriceInput(parseFloat(priceInput).toFixed(2));
+                        }}
                         className="w-24 h-8 text-sm bg-background border-border"
                         placeholder="0.00"
                         autoFocus
@@ -242,7 +248,7 @@ const ClientView = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-accent-foreground"
+                        className="h-7 w-7 text-foreground"
                         onClick={async () => {
                           const newPrice = priceInput ? parseFloat(priceInput) : null;
                           const { error } = await supabase
@@ -253,7 +259,8 @@ const ClientView = () => {
                             toast({ title: "Update failed", description: error.message, variant: "destructive" });
                           } else {
                             setData((prev) => prev ? { ...prev, estimated_price: newPrice } : prev);
-                            toast({ title: "Price updated" });
+                            setPriceConfirm(true);
+                            setTimeout(() => setPriceConfirm(false), 2500);
                           }
                           setEditingPrice(false);
                         }}
@@ -270,18 +277,25 @@ const ClientView = () => {
                       </Button>
                     </div>
                   ) : (
-                    <button
-                      className="flex items-center gap-2 group cursor-pointer bg-transparent border-none p-0"
-                      onClick={() => {
-                        setPriceInput(data.estimated_price != null ? String(data.estimated_price) : "");
-                        setEditingPrice(true);
-                      }}
-                    >
+                    <div className="flex items-center gap-2">
+                      {priceConfirm && (
+                        <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground animate-in fade-in">
+                          Price updated.
+                        </span>
+                      )}
                       <span className="text-sm text-foreground">
                         {data.estimated_price != null ? `$${data.estimated_price}` : "—"}
                       </span>
-                      <Pencil className="h-3 w-3 text-muted-foreground/0 group-hover:text-muted-foreground transition-colors" />
-                    </button>
+                      <button
+                        className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/60 hover:text-muted-foreground underline underline-offset-2 bg-transparent border-none cursor-pointer transition-colors"
+                        onClick={() => {
+                          setPriceInput(data.estimated_price != null ? String(data.estimated_price) : "");
+                          setEditingPrice(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
