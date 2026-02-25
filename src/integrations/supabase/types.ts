@@ -43,6 +43,8 @@ export type Database = {
       }
       consultations: {
         Row: {
+          ai_generated_at: string | null
+          ai_recommendation: string | null
           appointment_date: string | null
           client_id: string
           created_at: string
@@ -61,6 +63,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ai_generated_at?: string | null
+          ai_recommendation?: string | null
           appointment_date?: string | null
           client_id: string
           created_at?: string
@@ -79,6 +83,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ai_generated_at?: string | null
+          ai_recommendation?: string | null
           appointment_date?: string | null
           client_id?: string
           created_at?: string
