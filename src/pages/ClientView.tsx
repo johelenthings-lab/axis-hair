@@ -308,14 +308,34 @@ const ClientView = () => {
                   <p className="text-center text-xs tracking-[0.12em] uppercase text-destructive/60 py-2">
                     This appointment has been cancelled
                   </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => updateStatus("awaiting_approval")}
-                    disabled={updating}
-                    className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
-                  >
-                    Restore Appointment
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        disabled={updating}
+                        className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
+                      >
+                        Restore Appointment
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Restore this appointment?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will move the consultation back to active status and include it in your metrics.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="tracking-[0.1em] uppercase text-xs">Keep Cancelled</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => updateStatus("awaiting_approval")}
+                          className="tracking-[0.1em] uppercase text-xs"
+                        >
+                          Restore
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               )}
             </div>
