@@ -1,25 +1,25 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Eye, ClipboardList, CheckCircle } from "lucide-react";
+import { Eye, Sparkles, BarChart3 } from "lucide-react";
 
-const modules = [
+const pillars = [
   {
     icon: Eye,
-    title: "AI Preview",
+    title: "Client Preview Confidence",
     description:
-      "Generate realistic hairstyle previews before the first cut. Clients see structure, not guesswork.",
+      "Let clients visualize potential results before the appointment. Reduce uncertainty and increase trust.",
   },
   {
-    icon: ClipboardList,
-    title: "Structured Intake",
+    icon: Sparkles,
+    title: "Professional AI Recommendations",
     description:
-      "Guided consultation flow captures texture, history, lifestyle, and goals. No detail left to chance.",
+      "Structured, stylist-driven recommendations that feel personal — not generic.",
   },
   {
-    icon: CheckCircle,
-    title: "Approval Workflow",
+    icon: BarChart3,
+    title: "Built-In Revenue Clarity",
     description:
-      "Client reviews and approves the look before the appointment. Alignment is built into the process.",
+      "Track approved consultations and expected income automatically — without spreadsheets.",
   },
 ];
 
@@ -40,25 +40,25 @@ const SolutionSection = () => {
             The Platform
           </p>
           <h2 className="font-display font-bold text-3xl md:text-4xl tracking-[0.05em] text-foreground">
-            Three systems. One workflow.
+            Three pillars. One system.
           </h2>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {modules.map((mod, i) => (
+          {pillars.map((pillar, i) => (
             <motion.div
-              key={mod.title}
+              key={pillar.title}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.15 * i }}
               className="axis-card"
             >
-              <mod.icon className="w-4 h-4 text-foreground/70 mb-6" strokeWidth={1.5} />
+              <pillar.icon className="w-4 h-4 text-foreground/70 mb-6" strokeWidth={1.5} />
               <h3 className="font-display font-extrabold text-lg tracking-[0.05em] text-foreground mb-3">
-                {mod.title}
+                {pillar.title}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {mod.description}
+                {pillar.description}
               </p>
             </motion.div>
           ))}
