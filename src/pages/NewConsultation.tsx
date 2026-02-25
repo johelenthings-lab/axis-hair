@@ -121,10 +121,15 @@ const NewConsultation = () => {
         .eq("id", consultation.id);
     }
 
-    // Fire-and-forget AI recommendation generation
+    // Fire-and-forget: AI text recommendation
     supabase.functions.invoke("generate-recommendation", {
       body: { consultation_id: consultation.id },
     }).catch((err) => console.error("AI recommendation error:", err));
+
+    // Fire-and-forget: AI image preview generation
+    supabase.functions.invoke("generate-preview-image", {
+      body: { consultation_id: consultation.id },
+    }).catch((err) => console.error("AI preview image error:", err));
 
     setLoading(false);
     navigate(`/client-view/${consultation.id}`);
@@ -345,9 +350,8 @@ const NewConsultation = () => {
               {serviceType === "quick_service" ? (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className={`border border-dashed rounded-sm p-4 text-center transition-colors cursor-pointer ${
-                    clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
-                  }`}
+                  className={`border border-dashed rounded-sm p-4 text-center transition-colors cursor-pointer ${clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
+                    }`}
                 >
                   {clientPhoto ? (
                     <p className="text-xs text-foreground">{clientPhoto.name} <span className="text-muted-foreground ml-1">— click to change</span></p>
@@ -361,9 +365,8 @@ const NewConsultation = () => {
               ) : (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-sm p-8 text-center transition-colors cursor-pointer ${
-                    clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
-                  }`}
+                  className={`border-2 border-dashed rounded-sm p-8 text-center transition-colors cursor-pointer ${clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
+                    }`}
                 >
                   {clientPhoto ? (
                     <>

@@ -33,6 +33,7 @@ interface ConsultationData {
   lifestyle: string | null;
   inspiration_notes: string | null;
   status: string;
+  preview_status: string | null;
   estimated_price: number | null;
   appointment_date: string | null;
   original_image_url: string | null;
@@ -98,7 +99,7 @@ const ClientView = () => {
     const fetchData = async () => {
       const { data: row } = await supabase
         .from("consultations")
-        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, estimated_duration_minutes, appointment_date, original_image_url, preview_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, preview_status, estimated_price, estimated_duration_minutes, appointment_date, original_image_url, preview_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
         .eq("id", id!)
         .single();
       setData(row as ConsultationData | null);
@@ -106,6 +107,35 @@ const ClientView = () => {
     };
     fetchData();
   }, [id]);
+
+  // Poll for preview image while it is being generated
+  useEffect(() => {
+    if (!data) return;
+    if (data.preview_image_url) return; // already done
+    if (data.preview_status !== "generating") return;
+
+    const poll = setInterval(async () => {
+      const { data: row } = await supabase
+        .from("consultations")
+        .select("preview_image_url, preview_status")
+        .eq("id", id!)
+        .single();
+
+      if (row?.preview_image_url) {
+        clearInterval(poll);
+        setData((prev) =>
+          prev
+            ? { ...prev, preview_image_url: row.preview_image_url, preview_status: "done" }
+            : prev
+        );
+      } else if (row?.preview_status === "error") {
+        clearInterval(poll);
+        setData((prev) => prev ? { ...prev, preview_status: "error" } : prev);
+      }
+    }, 5000);
+
+    return () => clearInterval(poll);
+  }, [data?.preview_status, data?.preview_image_url, id]);
 
   const updateStatus = async (status: string) => {
     setUpdating(true);
@@ -164,19 +194,57 @@ const ClientView = () => {
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
               Style Preview
             </h2>
-            <SwipeReveal
-              beforeUrl={data.original_image_url}
-              afterUrl={data.preview_image_url ?? undefined}
-              beforeLabel="Original"
-              afterLabel="Preview"
-            />
-            <div className="mt-4 flex items-center gap-3 justify-center">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
-                Drag to compare
-              </span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+
+            {data.preview_status === "generating" && !data.preview_image_url ? (
+              <div className="w-full aspect-[3/4] border border-border rounded-sm bg-muted/20 flex flex-col items-center justify-center gap-4">
+                <div className="flex items-end gap-1 h-8">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="w-1 rounded-full bg-accent"
+                      style={{
+                        animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`,
+                        height: `${16 + (i % 3) * 8}px`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="text-center px-6">
+                  <p className="font-display text-sm tracking-[0.15em] uppercase text-foreground font-semibold">
+                    Generating Style Preview
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    AI is creating your client’s visual preview… This takes about 30–60 seconds.
+                  </p>
+                </div>
+              </div>
+            ) : data.preview_status === "error" && !data.preview_image_url ? (
+              <div className="w-full aspect-[3/4] border border-border rounded-sm bg-muted/20 flex flex-col items-center justify-center gap-4">
+                <p className="font-display text-sm tracking-[0.15em] uppercase text-foreground/60 font-semibold">
+                  Preview unavailable
+                </p>
+                <p className="text-xs text-muted-foreground text-center px-6">
+                  Image generation did not complete. Add a Replicate API key in Supabase secrets to enable this feature.
+                </p>
+              </div>
+            ) : (
+              <SwipeReveal
+                beforeUrl={data.original_image_url}
+                afterUrl={data.preview_image_url ?? undefined}
+                beforeLabel="Original"
+                afterLabel="Preview"
+              />
+            )}
+
+            {data.preview_image_url && (
+              <div className="mt-4 flex items-center gap-3 justify-center">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
+                  Drag to compare
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            )}
 
             {/* AI Recommendation */}
             <div className="mt-8">
