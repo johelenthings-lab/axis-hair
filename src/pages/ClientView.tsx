@@ -105,6 +105,7 @@ const ClientView = () => {
         approved: "Look approved!",
         revision_requested: "Adjustment requested",
         cancelled: "Appointment cancelled",
+        awaiting_approval: "Appointment restored",
       };
       toast({ title: messages[status] ?? "Status updated" });
       navigate("/dashboard");
@@ -303,9 +304,19 @@ const ClientView = () => {
               )}
 
               {data.status === "cancelled" && (
-                <p className="text-center text-xs tracking-[0.12em] uppercase text-destructive/60 py-2">
-                  This appointment has been cancelled
-                </p>
+                <div className="space-y-3">
+                  <p className="text-center text-xs tracking-[0.12em] uppercase text-destructive/60 py-2">
+                    This appointment has been cancelled
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => updateStatus("awaiting_approval")}
+                    disabled={updating}
+                    className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
+                  >
+                    Restore Appointment
+                  </Button>
+                </div>
               )}
             </div>
           </div>
