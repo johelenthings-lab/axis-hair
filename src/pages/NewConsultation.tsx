@@ -186,96 +186,120 @@ const NewConsultation = () => {
             </div>
           </div>
 
-          {/* Hair Profile */}
-          <div>
-            <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
-              Hair Profile
-            </h2>
-            <div className="grid md:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Hair Texture</Label>
-                <Select value={hairTexture} onValueChange={setHairTexture}>
-                  <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select texture" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="straight">Straight (Type 1)</SelectItem>
-                    <SelectItem value="wavy">Wavy (Type 2)</SelectItem>
-                    <SelectItem value="curly">Curly (Type 3)</SelectItem>
-                    <SelectItem value="coily">Coily (Type 4)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Desired Length</Label>
-                <Select value={desiredLength} onValueChange={setDesiredLength}>
-                  <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select length" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="buzz">Buzz / Close Crop</SelectItem>
-                    <SelectItem value="short">Short</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="long">Long</SelectItem>
-                    <SelectItem value="maintain">Maintain Current</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Face Shape</Label>
-                <Select value={faceShape} onValueChange={setFaceShape}>
-                  <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select shape" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="oval">Oval</SelectItem>
-                    <SelectItem value="round">Round</SelectItem>
-                    <SelectItem value="square">Square</SelectItem>
-                    <SelectItem value="heart">Heart</SelectItem>
-                    <SelectItem value="oblong">Oblong</SelectItem>
-                    <SelectItem value="diamond">Diamond</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Maintenance Level</Label>
-                <Select value={maintenanceLevel} onValueChange={setMaintenanceLevel}>
-                  <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select level" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low — Minimal Styling</SelectItem>
-                    <SelectItem value="medium">Medium — Some Effort</SelectItem>
-                    <SelectItem value="high">High — Daily Styling</SelectItem>
-                  </SelectContent>
-                </Select>
+          {/* Hair Profile — full_preview only */}
+          {serviceType === "full_preview" && (
+            <div>
+              <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
+                Hair Profile
+              </h2>
+              <div className="grid md:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Hair Texture</Label>
+                  <Select value={hairTexture} onValueChange={setHairTexture}>
+                    <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select texture" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="straight">Straight (Type 1)</SelectItem>
+                      <SelectItem value="wavy">Wavy (Type 2)</SelectItem>
+                      <SelectItem value="curly">Curly (Type 3)</SelectItem>
+                      <SelectItem value="coily">Coily (Type 4)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Desired Length</Label>
+                  <Select value={desiredLength} onValueChange={setDesiredLength}>
+                    <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select length" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="buzz">Buzz / Close Crop</SelectItem>
+                      <SelectItem value="short">Short</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="long">Long</SelectItem>
+                      <SelectItem value="maintain">Maintain Current</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Face Shape</Label>
+                  <Select value={faceShape} onValueChange={setFaceShape}>
+                    <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select shape" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="oval">Oval</SelectItem>
+                      <SelectItem value="round">Round</SelectItem>
+                      <SelectItem value="square">Square</SelectItem>
+                      <SelectItem value="heart">Heart</SelectItem>
+                      <SelectItem value="oblong">Oblong</SelectItem>
+                      <SelectItem value="diamond">Diamond</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Maintenance Level</Label>
+                  <Select value={maintenanceLevel} onValueChange={setMaintenanceLevel}>
+                    <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select level" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low — Minimal Styling</SelectItem>
+                      <SelectItem value="medium">Medium — Some Effort</SelectItem>
+                      <SelectItem value="high">High — Daily Styling</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Lifestyle */}
-          <div>
-            <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
-              Lifestyle & Preferences
-            </h2>
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Lifestyle</Label>
-                <Select value={lifestyle} onValueChange={setLifestyle}>
-                  <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select lifestyle" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="professional">Professional / Corporate</SelectItem>
-                    <SelectItem value="creative">Creative / Artistic</SelectItem>
-                    <SelectItem value="active">Active / Athletic</SelectItem>
-                    <SelectItem value="casual">Casual / Relaxed</SelectItem>
-                  </SelectContent>
-                </Select>
+          {/* Lifestyle — full_preview only */}
+          {serviceType === "full_preview" && (
+            <div>
+              <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
+                Lifestyle & Preferences
+              </h2>
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Lifestyle</Label>
+                  <Select value={lifestyle} onValueChange={setLifestyle}>
+                    <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select lifestyle" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional / Corporate</SelectItem>
+                      <SelectItem value="creative">Creative / Artistic</SelectItem>
+                      <SelectItem value="active">Active / Athletic</SelectItem>
+                      <SelectItem value="casual">Casual / Relaxed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">
+                    Inspiration Notes <span className="normal-case text-muted-foreground/60">(optional)</span>
+                  </Label>
+                  <Textarea
+                    value={inspirationNotes}
+                    onChange={(e) => setInspirationNotes(e.target.value)}
+                    placeholder="Describe the look the client is going for, any references, or special considerations..."
+                    className="bg-background border-border min-h-[100px] resize-none"
+                  />
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* Maintenance Notes — quick_service only */}
+          {serviceType === "quick_service" && (
+            <div>
+              <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
+                Notes
+              </h2>
               <div className="space-y-2">
                 <Label className="text-xs tracking-[0.12em] uppercase text-muted-foreground">
-                  Inspiration Notes <span className="normal-case text-muted-foreground/60">(optional)</span>
+                  Maintenance Notes <span className="normal-case text-muted-foreground/60">(optional)</span>
                 </Label>
                 <Textarea
                   value={inspirationNotes}
                   onChange={(e) => setInspirationNotes(e.target.value)}
-                  placeholder="Describe the look the client is going for, any references, or special considerations..."
-                  className="bg-background border-border min-h-[100px] resize-none"
+                  placeholder="Any notes about this maintenance appointment..."
+                  className="bg-background border-border min-h-[80px] resize-none"
                 />
               </div>
             </div>
-          </div>
+          )}
 
           {/* Appointment & Pricing */}
           <div>
@@ -311,30 +335,46 @@ const NewConsultation = () => {
                   setClientPhoto(file);
                 }}
               />
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-sm p-8 text-center transition-colors cursor-pointer ${
-                  clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
-                }`}
-              >
-                {clientPhoto ? (
-                  <>
-                    <ImageIcon className="h-5 w-5 mx-auto text-accent mb-3" />
-                    <p className="text-sm font-medium text-foreground mb-1">{clientPhoto.name}</p>
-                    <p className="text-xs text-muted-foreground">Click to change photo</p>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-3" />
-                    <p className="text-sm font-medium text-foreground mb-1">
-                      Upload Client Photo {serviceType === "full_preview" ? "*" : ""}
+              {serviceType === "quick_service" ? (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`border border-dashed rounded-sm p-4 text-center transition-colors cursor-pointer ${
+                    clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
+                  }`}
+                >
+                  {clientPhoto ? (
+                    <p className="text-xs text-foreground">{clientPhoto.name} <span className="text-muted-foreground ml-1">— click to change</span></p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      <Upload className="h-3.5 w-3.5 inline mr-1.5 -mt-0.5" />
+                      Attach a photo if needed
                     </p>
-                    <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                      JPG or PNG. For best results, use natural lighting and face camera directly.
-                    </p>
-                  </>
-                )}
-              </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`border-2 border-dashed rounded-sm p-8 text-center transition-colors cursor-pointer ${
+                    clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
+                  }`}
+                >
+                  {clientPhoto ? (
+                    <>
+                      <ImageIcon className="h-5 w-5 mx-auto text-accent mb-3" />
+                      <p className="text-sm font-medium text-foreground mb-1">{clientPhoto.name}</p>
+                      <p className="text-xs text-muted-foreground">Click to change photo</p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-3" />
+                      <p className="text-sm font-medium text-foreground mb-1">Upload Client Photo *</p>
+                      <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                        JPG or PNG. For best results, use natural lighting and face camera directly.
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
