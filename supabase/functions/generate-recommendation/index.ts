@@ -111,3 +111,30 @@ Avoid fluff. Avoid emojis. Avoid casual language.`;
     );
   }
 });
+Update the generate-recommendation edge function to improve variation behavior.
+
+Inside the existing prompt string, modify it so that:
+
+If ai_recommendation already exists for this consultation, append the following instruction to the prompt:
+
+"Provide a distinctly different structural and aesthetic approach than any previous recommendation for this consultation. Do not repeat structure, direction, or phrasing."
+
+Implementation requirements:
+
+Before building the prompt, fetch ai_recommendation from the consultation record.
+
+If ai_recommendation is not null:
+
+Add a boolean flag isRegeneration = true
+
+When building the prompt:
+
+If isRegeneration is true, append the variation instruction at the end of the prompt.
+
+Do not modify the frontend.
+
+Do not change response format.
+
+Keep TypeScript clean.
+
+Preserve existing DB update logic.
