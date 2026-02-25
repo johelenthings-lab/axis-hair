@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Link2, Check, X } from "lucide-react";
+import { ArrowLeft, Download, Link2, Check, X, CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
 import AIRecommendation from "@/components/AIRecommendation";
@@ -57,6 +61,8 @@ const ClientView = () => {
   const [editingPrice, setEditingPrice] = useState(false);
   const [priceInput, setPriceInput] = useState("");
   const [priceConfirm, setPriceConfirm] = useState(false);
+  const [editingDate, setEditingDate] = useState(false);
+  const [dateConfirm, setDateConfirm] = useState(false);
 
   const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
     setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
@@ -292,6 +298,79 @@ const ClientView = () => {
                           setPriceInput(data.estimated_price != null ? String(data.estimated_price) : "");
                           setEditingPrice(true);
                         }}
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-between items-center min-h-[32px]">
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Appointment</span>
+                  {data.status === "cancelled" ? (
+                    <span className="text-xs text-muted-foreground/50 italic">Restore appointment to modify date.</span>
+                  ) : editingDate ? (
+                    <div className="flex items-center gap-2">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "h-8 w-[160px] justify-start text-left text-sm border-border",
+                              !data.appointment_date && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                            {data.appointment_date
+                              ? format(new Date(data.appointment_date), "MMM d, yyyy")
+                              : "Pick a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                          <Calendar
+                            mode="single"
+                            selected={data.appointment_date ? new Date(data.appointment_date) : undefined}
+                            onSelect={async (date) => {
+                              const isoDate = date ? date.toISOString() : null;
+                              const { error } = await supabase
+                                .from("consultations")
+                                .update({ appointment_date: isoDate })
+                                .eq("id", id!);
+                              if (error) {
+                                toast({ title: "Update failed", description: error.message, variant: "destructive" });
+                              } else {
+                                setData((prev) => prev ? { ...prev, appointment_date: isoDate } : prev);
+                                setDateConfirm(true);
+                                setTimeout(() => setDateConfirm(false), 2500);
+                              }
+                              setEditingDate(false);
+                            }}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-muted-foreground"
+                        onClick={() => setEditingDate(false)}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      {dateConfirm && (
+                        <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground animate-in fade-in">
+                          Date updated.
+                        </span>
+                      )}
+                      <span className="text-sm text-foreground">
+                        {data.appointment_date ? format(new Date(data.appointment_date), "MMM d, yyyy") : "—"}
+                      </span>
+                      <button
+                        className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/60 hover:text-muted-foreground underline underline-offset-2 bg-transparent border-none cursor-pointer transition-colors"
+                        onClick={() => setEditingDate(true)}
                       >
                         Edit
                       </button>
