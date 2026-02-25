@@ -35,8 +35,10 @@ const HeroSection = () => {
         </motion.div>
       </AnimatePresence>
 
+      {/* Vignette */}
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, hsl(30 10% 8% / 0.25) 100%)" }} />
       {/* Ivory overlay */}
-      <div className="absolute inset-0 bg-axis-ivory/75" />
+      <div className="absolute inset-0 bg-axis-ivory/65" />
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
@@ -45,15 +47,15 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <h1 className="font-display font-bold tracking-[0.3em] uppercase text-foreground text-5xl md:text-7xl lg:text-8xl mb-8">
+          <h1 className="font-display font-extrabold tracking-[0.35em] uppercase text-foreground text-6xl md:text-8xl lg:text-9xl mb-5">
             AXIS HAIR™
           </h1>
 
-          <div className="space-y-1 mb-8">
-            <p className="font-display text-lg md:text-xl tracking-[0.1em] text-foreground/80">
+          <div className="space-y-1 mb-7">
+            <p className="font-display text-xl md:text-2xl tracking-[0.1em] text-foreground/85">
               Defined by structure.
             </p>
-            <p className="font-display text-lg md:text-xl tracking-[0.1em] text-foreground/80">
+            <p className="font-display text-xl md:text-2xl tracking-[0.1em] text-foreground/85">
               Designed for you.
             </p>
           </div>

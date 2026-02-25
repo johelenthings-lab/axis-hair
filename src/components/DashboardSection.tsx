@@ -33,7 +33,7 @@ const DashboardSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -46,14 +46,14 @@ const DashboardSection = () => {
               }}
             >
               <p
-                className="font-display font-extrabold text-4xl md:text-6xl tracking-tight mb-2"
+                className="font-display font-extrabold text-5xl md:text-7xl tracking-tight mb-3"
                 style={{ color: "hsl(var(--axis-dashboard-fg))" }}
               >
                 {stat.value}
               </p>
               <p
-                className="text-xs tracking-[0.1em] uppercase"
-                style={{ color: "hsl(var(--axis-dashboard-fg) / 0.5)" }}
+                className="text-xs tracking-[0.12em] uppercase"
+                style={{ color: "hsl(var(--axis-dashboard-fg) / 0.55)" }}
               >
                 {stat.label}
               </p>

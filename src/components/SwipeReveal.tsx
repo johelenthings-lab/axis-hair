@@ -56,7 +56,7 @@ const SwipeReveal = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-sm cursor-ew-resize select-none"
+      className="relative w-full aspect-[3/4] md:aspect-[4/3] overflow-hidden rounded-sm cursor-ew-resize select-none"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -83,14 +83,14 @@ const SwipeReveal = () => {
 
       {/* Divider line */}
       <div
-        className="absolute top-0 bottom-0 w-px bg-foreground/40 z-10"
+        className="absolute top-0 bottom-0 w-px bg-foreground/50 z-10"
         style={{ left: `${position}%` }}
       >
         {/* Handle */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-foreground/40 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full border border-foreground/50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
           <div className="flex gap-0.5">
-            <div className="w-px h-3 bg-foreground/50" />
-            <div className="w-px h-3 bg-foreground/50" />
+            <div className="w-px h-2.5 bg-foreground/60" />
+            <div className="w-px h-2.5 bg-foreground/60" />
           </div>
         </div>
       </div>
