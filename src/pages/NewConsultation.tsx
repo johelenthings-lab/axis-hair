@@ -117,8 +117,7 @@ const NewConsultation = () => {
 
     // Fire-and-forget AI recommendation generation
     supabase.functions.invoke("generate-recommendation", {
-  body: { consultation_id: consultation.id },
-}),
+      body: { consultation_id: consultation.id },
     }).catch((err) => console.error("AI recommendation error:", err));
 
     setLoading(false);
