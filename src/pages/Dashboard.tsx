@@ -19,12 +19,14 @@ const statusLabel: Record<string, string> = {
   awaiting_approval: "Awaiting Approval",
   approved: "Approved",
   revision_requested: "Revision Requested",
+  cancelled: "Cancelled",
 };
 
 const statusStyle = (status: string) => {
   switch (status) {
     case "approved": return "text-foreground font-medium";
     case "revision_requested": return "text-foreground/70 italic";
+    case "cancelled": return "text-destructive/60 line-through";
     default: return "text-muted-foreground";
   }
 };
@@ -52,14 +54,17 @@ const Dashboard = () => {
   const weekStart = startOfWeek(now, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
 
-  const thisWeek = consultations.filter((c) => {
+  const active = consultations.filter((c) => c.status !== "cancelled");
+  const cancelled = consultations.filter((c) => c.status === "cancelled");
+
+  const thisWeek = active.filter((c) => {
     if (!c.appointment_date) return false;
     const d = new Date(c.appointment_date);
     return d >= weekStart && d <= weekEnd;
   });
 
-  const total = consultations.length;
-  const approvedCount = consultations.filter((c) => c.status === "approved").length;
+  const total = active.length;
+  const approvedCount = active.filter((c) => c.status === "approved").length;
   const approvalRate = total > 0 ? Math.round((approvedCount / total) * 100) : 0;
 
   const approvedWithPrice = consultations.filter(
@@ -154,12 +159,12 @@ const Dashboard = () => {
               <div className="px-6 py-8 text-center">
                 <span className="text-sm text-muted-foreground animate-pulse">Loading...</span>
               </div>
-            ) : consultations.length === 0 ? (
+            ) : active.length === 0 ? (
               <div className="px-6 py-8 text-center">
-                <span className="text-sm text-muted-foreground">No consultations yet. Create your first one.</span>
+                <span className="text-sm text-muted-foreground">No active consultations. Create your first one.</span>
               </div>
             ) : (
-              consultations.map((c) => (
+              active.map((c) => (
                 <div
                   key={c.id}
                   className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-4 border-b border-border last:border-0 hover:bg-muted/20 transition-colors cursor-pointer"
@@ -179,6 +184,35 @@ const Dashboard = () => {
               ))
             )}
           </div>
+
+          {/* Cancelled */}
+          {cancelled.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground/50 mb-4">
+                Cancelled ({cancelled.length})
+              </h3>
+              <div className="border border-border/50 rounded-sm overflow-hidden opacity-60">
+                {cancelled.map((c) => (
+                  <div
+                    key={c.id}
+                    className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-3 border-b border-border/50 last:border-0 hover:bg-muted/10 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/client-view/${c.id}`)}
+                  >
+                    <span className="text-sm text-muted-foreground">
+                      {c.clients?.full_name ?? "Unknown"}
+                    </span>
+                    <span className={`text-sm ${statusStyle(c.status)}`}>
+                      {statusLabel[c.status]}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {c.appointment_date ? format(new Date(c.appointment_date), "MMM d, yyyy") : "—"}
+                    </span>
+                    <span className="text-sm text-muted-foreground">—</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}

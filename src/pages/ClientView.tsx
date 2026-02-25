@@ -7,6 +7,17 @@ import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
 import AIRecommendation from "@/components/AIRecommendation";
 import { generateConsultationPdf } from "@/lib/generateConsultationPdf";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ConsultationData {
   id: string;
@@ -90,7 +101,12 @@ const ClientView = () => {
     if (error) {
       toast({ title: "Update failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: status === "approved" ? "Look approved!" : "Adjustment requested" });
+      const messages: Record<string, string> = {
+        approved: "Look approved!",
+        revision_requested: "Adjustment requested",
+        cancelled: "Appointment cancelled",
+      };
+      toast({ title: messages[status] ?? "Status updated" });
       navigate("/dashboard");
     }
     setUpdating(false);
@@ -241,6 +257,42 @@ const ClientView = () => {
                 <Download className="h-3.5 w-3.5 mr-2" />
                 {generatingPdf ? "Generating PDF…" : "Download Consultation PDF"}
               </Button>
+
+              {data.status !== "cancelled" && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full tracking-[0.12em] uppercase text-xs h-12 border-destructive/30 text-destructive/80 hover:bg-destructive/5 hover:text-destructive"
+                    >
+                      Cancel Appointment
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure you want to cancel this appointment?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will mark the consultation as cancelled. The record will be preserved but excluded from active metrics.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="tracking-[0.1em] uppercase text-xs">Keep Appointment</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => updateStatus("cancelled")}
+                        className="bg-destructive/80 text-destructive-foreground hover:bg-destructive tracking-[0.1em] uppercase text-xs"
+                      >
+                        Confirm Cancel
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              {data.status === "cancelled" && (
+                <p className="text-center text-xs tracking-[0.12em] uppercase text-destructive/60 py-2">
+                  This appointment has been cancelled
+                </p>
+              )}
             </div>
           </div>
         </div>
