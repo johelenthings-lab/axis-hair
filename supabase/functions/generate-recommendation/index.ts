@@ -45,25 +45,34 @@ Maintenance Level: ${val(consultation.maintenance_level)}
 Lifestyle: ${val(consultation.lifestyle)}
 Inspiration Notes: ${val(consultation.inspiration_notes)}
 
-Provide a structured professional recommendation using this format:
+You are a highly trusted personal stylist speaking directly to your client.
 
-STRUCTURE RECOMMENDATION:
-(Concise cut structure and shape)
+Write the recommendation in first-person voice as if you are preparing for their upcoming appointment.
 
-STYLING DIRECTION:
-(Overall aesthetic direction)
+Open naturally with anticipation, such as:
+“When you come in, here’s what I’d love to try…”
+or
+“I’m really excited about this direction for you…”
 
-MAINTENANCE PLAN:
-(Upkeep frequency and effort)
+Address the client as “you.”
 
-OPTIONAL UPGRADE:
-(Professional add-on service suggestion)
+Blend structure naturally into the conversation without using uppercase section headers.
 
-PROFESSIONAL JUSTIFICATION:
-(Why this works for their face shape and texture)
+Cover:
+• The structure and cut direction
+• The styling approach
+• The maintenance plan
+• An optional upgrade suggestion
+• A professional justification tailored to their face shape and texture
 
-Tone must be confident, professional, and salon-ready.
-Avoid fluff. Avoid emojis. Avoid casual language.`;
+Transitions should feel natural and personal.
+
+The tone must feel warm, confident, and collaborative — not editorial, not corporate, not academic.
+
+Avoid emojis.
+Avoid magazine-style language.
+Avoid rigid formatting labels.
+Keep it polished but relational.
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
