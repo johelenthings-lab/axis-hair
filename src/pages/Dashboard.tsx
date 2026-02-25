@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus, Clock, CheckCircle } from "lucide-react";
-import { format, startOfWeek, endOfWeek, subMonths, subWeeks } from "date-fns";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { format, startOfWeek, endOfWeek } from "date-fns";
 
 interface ConsultationRow {
   id: string;
@@ -34,7 +33,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [consultations, setConsultations] = useState<ConsultationRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [trendGranularity, setTrendGranularity] = useState<"monthly" | "weekly">("monthly");
+  
 
   useEffect(() => {
     fetchData();
@@ -93,36 +92,6 @@ const Dashboard = () => {
     { label: "Total Lifetime Revenue", value: fmt(lifetimeRevenue), sub: `${approvedWithPrice.length} approved` },
   ];
 
-  // Build 12-month revenue trend
-  const monthlyTrend = useMemo(() => {
-    const months: { name: string; revenue: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = subMonths(now, i);
-      const mStart = new Date(d.getFullYear(), d.getMonth(), 1);
-      const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
-      months.push({
-        name: format(mStart, "MMM"),
-        revenue: revenueIn(mStart, mEnd),
-      });
-    }
-    return months;
-  }, [consultations]);
-
-  // Build 12-week revenue trend
-  const weeklyTrend = useMemo(() => {
-    const weeks: { name: string; revenue: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const wStart = startOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
-      const wEnd = endOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
-      weeks.push({
-        name: format(wStart, "MMM d"),
-        revenue: revenueIn(wStart, wEnd),
-      });
-    }
-    return weeks;
-  }, [consultations]);
-
-  const trendData = trendGranularity === "monthly" ? monthlyTrend : weeklyTrend;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -165,79 +134,6 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Revenue Trend */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 pt-12">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground">
-            Revenue Trend
-          </h3>
-          <div className="flex gap-1 border border-border rounded-sm overflow-hidden">
-            <button
-              onClick={() => setTrendGranularity("weekly")}
-              className={`px-3 py-1.5 text-xs tracking-[0.1em] uppercase transition-colors ${
-                trendGranularity === "weekly"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Weekly
-            </button>
-            <button
-              onClick={() => setTrendGranularity("monthly")}
-              className={`px-3 py-1.5 text-xs tracking-[0.1em] uppercase transition-colors ${
-                trendGranularity === "monthly"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Monthly
-            </button>
-          </div>
-        </div>
-        <div className="border border-border rounded-sm p-6 bg-card">
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={trendData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--accent-foreground))" stopOpacity={0.25} />
-                  <stop offset="100%" stopColor="hsl(var(--accent-foreground))" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
-                tickLine={false}
-              />
-              <YAxis
-                tickFormatter={(v: number) => `$${v}`}
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                axisLine={false}
-                tickLine={false}
-                width={60}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: 4,
-                  fontSize: 12,
-                }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
-              />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="hsl(var(--accent-foreground))"
-                strokeWidth={2}
-                fill="url(#revGradient)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
         </div>
       </section>
 
