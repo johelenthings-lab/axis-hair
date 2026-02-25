@@ -127,6 +127,23 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-12">
 
+        {/* Welcome Banner — first-time only */}
+        {!loading && consultations.length === 0 && (
+          <section className="border border-border rounded-sm p-8 md:p-10 text-center space-y-3">
+            <h2 className="font-display text-lg font-semibold tracking-[0.08em] text-foreground">
+              Welcome to AXIS HAIR™
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Start by creating your first consultation. The system will guide you through the rest.
+            </p>
+            <Button
+              onClick={() => navigate("/consultation/new")}
+              className="mt-2 bg-accent text-accent-foreground hover:opacity-90 tracking-[0.12em] uppercase text-xs font-semibold rounded-sm"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Create Consultation
+            </Button>
+          </section>
+        )}
         {/* 1️⃣ Today's Focus */}
         <section className="bg-accent text-accent-foreground rounded-sm p-8 md:p-10">
           <div className="flex items-start justify-between mb-6">
