@@ -119,7 +119,7 @@ const Dashboard = () => {
           <h2 className="font-display text-xs tracking-[0.25em] uppercase text-accent-foreground/50 mb-8">
             Performance Overview
           </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 md:gap-10">
             {metrics.map((m) => (
               <div key={m.label}>
                 <p className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">
