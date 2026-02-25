@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
 import AIRecommendation from "@/components/AIRecommendation";
+import { generateConsultationPdf } from "@/lib/generateConsultationPdf";
 
 interface ConsultationData {
   id: string;
@@ -40,9 +41,34 @@ const ClientView = () => {
   const [data, setData] = useState<ConsultationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
     setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!data) return;
+    setGeneratingPdf(true);
+    try {
+      await generateConsultationPdf({
+        clientName: data.clients?.full_name ?? "Client",
+        hairTexture: display(data.hair_texture),
+        desiredLength: display(data.desired_length),
+        faceShape: display(data.face_shape),
+        maintenanceLevel: display(data.maintenance_level),
+        lifestyle: display(data.lifestyle),
+        estimatedPrice: data.estimated_price != null ? `$${data.estimated_price}` : "—",
+        recommendation: data.ai_recommendation,
+        generatedAt: data.ai_generated_at,
+        originalImageUrl: data.original_image_url,
+        previewImageUrl: data.preview_image_url,
+      });
+    } catch {
+      toast({ title: "Failed to generate PDF", variant: "destructive" });
+    } finally {
+      setGeneratingPdf(false);
+    }
   };
 
   useEffect(() => {
@@ -205,6 +231,16 @@ const ClientView = () => {
                   Request Adjustment
                 </Button>
               </div>
+
+              <Button
+                variant="outline"
+                onClick={handleDownloadPdf}
+                disabled={generatingPdf}
+                className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
+              >
+                <Download className="h-3.5 w-3.5 mr-2" />
+                {generatingPdf ? "Generating PDF…" : "Download Consultation PDF"}
+              </Button>
             </div>
           </div>
         </div>
