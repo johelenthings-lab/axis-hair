@@ -115,6 +115,11 @@ const NewConsultation = () => {
       .update({ original_image_url: imageUrl })
       .eq("id", consultation.id);
 
+    // Fire-and-forget AI recommendation generation
+    supabase.functions.invoke("generate-recommendation", {
+      body: { consultation_id: consultation.id },
+    }).catch((err) => console.error("AI recommendation error:", err));
+
     setLoading(false);
     navigate(`/client-view/${consultation.id}`);
   };

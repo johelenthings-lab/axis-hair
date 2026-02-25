@@ -17,6 +17,8 @@ interface ConsultationData {
   estimated_price: number | null;
   appointment_date: string | null;
   original_image_url: string | null;
+  ai_recommendation: string | null;
+  ai_generated_at: string | null;
   clients: { full_name: string } | null;
 }
 
@@ -37,16 +39,34 @@ const ClientView = () => {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       const { data: row } = await supabase
         .from("consultations")
-        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, clients(full_name)")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, original_image_url, ai_recommendation, ai_generated_at, clients(full_name)")
         .eq("id", id!)
         .single();
       setData(row as ConsultationData | null);
       setLoading(false);
+      return row as ConsultationData | null;
     };
-    fetch();
+    fetchData().then((row) => {
+      // Poll for AI recommendation if not yet generated
+      if (row && !row.ai_recommendation) {
+        const interval = setInterval(async () => {
+          const { data: updated } = await supabase
+            .from("consultations")
+            .select("ai_recommendation, ai_generated_at")
+            .eq("id", id!)
+            .single();
+          if (updated?.ai_recommendation) {
+            setData((prev) => prev ? { ...prev, ...updated } : prev);
+            clearInterval(interval);
+          }
+        }, 3000);
+        // Stop polling after 60s
+        setTimeout(() => clearInterval(interval), 60000);
+      }
+    });
   }, [id]);
 
   const updateStatus = async (status: string) => {
@@ -124,6 +144,32 @@ const ClientView = () => {
                 Drag to compare
               </span>
               <div className="h-px flex-1 bg-border" />
+            </div>
+
+            {/* AI Recommendation */}
+            <div className="mt-8">
+              <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
+                Professional Recommendation
+              </h2>
+              {data.ai_recommendation ? (
+                <div className="border border-border rounded-sm p-6 bg-muted/30">
+                  <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
+                    {data.ai_recommendation}
+                  </div>
+                  {data.ai_generated_at && (
+                    <p className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground mt-4">
+                      Generated {new Date(data.ai_generated_at).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="border border-border rounded-sm p-6 bg-muted/30 flex items-center gap-3">
+                  <div className="h-3 w-3 rounded-full bg-accent animate-pulse" />
+                  <span className="text-sm text-muted-foreground">
+                    Generating professional recommendation…
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
