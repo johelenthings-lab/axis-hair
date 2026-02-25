@@ -1,14 +1,85 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface ConsultationData {
+  id: string;
+  hair_texture: string | null;
+  desired_length: string | null;
+  face_shape: string | null;
+  maintenance_level: string | null;
+  lifestyle: string | null;
+  inspiration_notes: string | null;
+  status: string;
+  estimated_price: number | null;
+  appointment_date: string | null;
+  clients: { full_name: string } | null;
+}
+
+const labelMap: Record<string, string> = {
+  straight: "Straight (Type 1)", wavy: "Wavy (Type 2)", curly: "Curly (Type 3)", coily: "Coily (Type 4)",
+  buzz: "Buzz / Close Crop", short: "Short", medium: "Medium", long: "Long", maintain: "Maintain Current",
+  oval: "Oval", round: "Round", square: "Square", heart: "Heart", oblong: "Oblong", diamond: "Diamond",
+  low: "Low — Minimal Styling", high: "High — Daily Styling",
+  professional: "Professional / Corporate", creative: "Creative / Artistic", active: "Active / Athletic", casual: "Casual / Relaxed",
+};
 
 const ClientView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [data, setData] = useState<ConsultationData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data: row } = await supabase
+        .from("consultations")
+        .select("id, hair_texture, desired_length, face_shape, maintenance_level, lifestyle, inspiration_notes, status, estimated_price, appointment_date, clients(full_name)")
+        .eq("id", id!)
+        .single();
+      setData(row as ConsultationData | null);
+      setLoading(false);
+    };
+    fetch();
+  }, [id]);
+
+  const updateStatus = async (status: string) => {
+    setUpdating(true);
+    const { error } = await supabase.from("consultations").update({ status }).eq("id", id!);
+    if (error) {
+      toast({ title: "Update failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: status === "approved" ? "Look approved!" : "Adjustment requested" });
+      navigate("/dashboard");
+    }
+    setUpdating(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <span className="text-sm text-muted-foreground animate-pulse">Loading...</span>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <span className="text-sm text-muted-foreground">Consultation not found.</span>
+      </div>
+    );
+  }
+
+  const display = (val: string | null) => (val ? labelMap[val] ?? val : "—");
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Bar */}
       <header className="border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
@@ -17,7 +88,7 @@ const ClientView = () => {
           AXIS HAIR™
         </span>
         <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground ml-auto">
-          Client Preview #{id}
+          {data.clients?.full_name ?? "Client"}
         </span>
       </header>
 
@@ -39,7 +110,6 @@ const ClientView = () => {
                 </p>
               </div>
             </div>
-
             <div className="mt-4 flex items-center gap-3 justify-center">
               <div className="h-px flex-1 bg-border" />
               <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">
@@ -52,48 +122,68 @@ const ClientView = () => {
           {/* Details */}
           <div>
             <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-5">
-              Recommendation
+              Consultation Details
             </h2>
 
             <div className="space-y-6">
               <div>
                 <h3 className="font-display text-2xl font-semibold tracking-[0.1em] uppercase text-foreground">
-                  Modern Textured Crop
+                  {data.clients?.full_name ?? "Client"}
                 </h3>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  A structured crop that enhances natural texture while maintaining clean lines. 
-                  This style works with your hair's natural movement pattern rather than against it.
-                </p>
+                {data.inspiration_notes && (
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                    {data.inspiration_notes}
+                  </p>
+                )}
               </div>
 
               <div className="h-px bg-border" />
 
               <div className="space-y-4">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Why It Works</span>
-                  <span className="text-sm text-foreground">Complements face shape + natural texture</span>
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Hair Texture</span>
+                  <span className="text-sm text-foreground">{display(data.hair_texture)}</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Desired Length</span>
+                  <span className="text-sm text-foreground">{display(data.desired_length)}</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Face Shape</span>
+                  <span className="text-sm text-foreground">{display(data.face_shape)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Maintenance Level</span>
-                  <span className="text-sm text-foreground">Low — minimal daily styling</span>
+                  <span className="text-sm text-foreground">{display(data.maintenance_level)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
-                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Time</span>
-                  <span className="text-sm text-foreground">45 minutes</span>
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Lifestyle</span>
+                  <span className="text-sm text-foreground">{display(data.lifestyle)}</span>
                 </div>
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Cost</span>
-                  <span className="text-sm text-foreground">$65 – $85</span>
+                  <span className="text-sm text-foreground">
+                    {data.estimated_price != null ? `$${data.estimated_price}` : "—"}
+                  </span>
                 </div>
               </div>
 
               <div className="h-px bg-border" />
 
               <div className="flex gap-3 pt-2">
-                <Button className="flex-1 bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12">
-                  Approve This Look
+                <Button
+                  onClick={() => updateStatus("approved")}
+                  disabled={updating || data.status === "approved"}
+                  className="flex-1 bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12"
+                >
+                  {data.status === "approved" ? "Approved" : "Approve This Look"}
                 </Button>
-                <Button variant="outline" className="flex-1 tracking-[0.12em] uppercase text-xs h-12 border-border">
+                <Button
+                  variant="outline"
+                  onClick={() => updateStatus("revision_requested")}
+                  disabled={updating}
+                  className="flex-1 tracking-[0.12em] uppercase text-xs h-12 border-border"
+                >
                   Request Adjustment
                 </Button>
               </div>

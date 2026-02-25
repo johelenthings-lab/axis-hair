@@ -1,35 +1,75 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus, Clock, CheckCircle } from "lucide-react";
+import { format, startOfWeek, endOfWeek } from "date-fns";
 
-const metrics = [
-  { label: "This Week's Consultations", value: "24", sub: "+3 from last week" },
-  { label: "Client Approval Rate", value: "91%", sub: "Above average" },
-  { label: "Rebooking Rate", value: "78%", sub: "Steady" },
-  { label: "Est. Revenue This Week", value: "$4,280", sub: "+12% growth" },
-];
+interface ConsultationRow {
+  id: string;
+  status: string;
+  estimated_price: number | null;
+  appointment_date: string | null;
+  clients: { full_name: string } | null;
+}
 
-const clients = [
-  { name: "Maya Johnson", status: "Approved", date: "Feb 26, 2026", service: "Precision Cut + Color" },
-  { name: "Liam Chen", status: "Preview Generated", date: "Feb 27, 2026", service: "Texture Consultation" },
-  { name: "Ava Williams", status: "Photo Uploaded", date: "Feb 27, 2026", service: "Full Transformation" },
-  { name: "James Park", status: "Revision Requested", date: "Feb 28, 2026", service: "Shape & Style" },
-  { name: "Sophia Davis", status: "Approved", date: "Mar 1, 2026", service: "Cut + Finish" },
-];
+const statusLabel: Record<string, string> = {
+  photo_uploaded: "Photo Uploaded",
+  preview_generated: "Preview Generated",
+  awaiting_approval: "Awaiting Approval",
+  approved: "Approved",
+  revision_requested: "Revision Requested",
+};
 
 const statusStyle = (status: string) => {
   switch (status) {
-    case "Approved": return "text-foreground font-medium";
-    case "Preview Generated": return "text-muted-foreground";
-    case "Photo Uploaded": return "text-muted-foreground";
-    case "Revision Requested": return "text-foreground/70 italic";
+    case "approved": return "text-foreground font-medium";
+    case "revision_requested": return "text-foreground/70 italic";
     default: return "text-muted-foreground";
   }
 };
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [consultations, setConsultations] = useState<ConsultationRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const { data } = await supabase
+      .from("consultations")
+      .select("id, status, estimated_price, appointment_date, clients(full_name)")
+      .order("created_at", { ascending: false });
+    setConsultations((data as ConsultationRow[] | null) ?? []);
+    setLoading(false);
+  };
+
+  const now = new Date();
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+
+  const thisWeek = consultations.filter((c) => {
+    if (!c.appointment_date) return false;
+    const d = new Date(c.appointment_date);
+    return d >= weekStart && d <= weekEnd;
+  });
+
+  const total = consultations.length;
+  const approvedCount = consultations.filter((c) => c.status === "approved").length;
+  const approvalRate = total > 0 ? Math.round((approvedCount / total) * 100) : 0;
+  const weeklyRevenue = thisWeek
+    .filter((c) => c.status === "approved")
+    .reduce((sum, c) => sum + (c.estimated_price ?? 0), 0);
+
+  const metrics = [
+    { label: "This Week's Consultations", value: String(thisWeek.length), sub: `${total} total` },
+    { label: "Client Approval Rate", value: `${approvalRate}%`, sub: total > 0 ? `${approvedCount} of ${total}` : "No data yet" },
+    { label: "Rebooking Rate", value: "—", sub: "Coming soon" },
+    { label: "Est. Revenue This Week", value: `$${weeklyRevenue.toLocaleString()}`, sub: "Approved consultations" },
+  ];
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -88,18 +128,34 @@ const Dashboard = () => {
               <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Appointment</span>
               <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Service</span>
             </div>
-            {clients.map((c, i) => (
-              <div
-                key={i}
-                className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-4 border-b border-border last:border-0 hover:bg-muted/20 transition-colors cursor-pointer"
-                onClick={() => navigate(`/client-view/${i + 1}`)}
-              >
-                <span className="text-sm font-medium text-foreground">{c.name}</span>
-                <span className={`text-sm ${statusStyle(c.status)}`}>{c.status}</span>
-                <span className="text-sm text-muted-foreground">{c.date}</span>
-                <span className="text-sm text-muted-foreground">{c.service}</span>
+            {loading ? (
+              <div className="px-6 py-8 text-center">
+                <span className="text-sm text-muted-foreground animate-pulse">Loading...</span>
               </div>
-            ))}
+            ) : consultations.length === 0 ? (
+              <div className="px-6 py-8 text-center">
+                <span className="text-sm text-muted-foreground">No consultations yet. Create your first one.</span>
+              </div>
+            ) : (
+              consultations.map((c) => (
+                <div
+                  key={c.id}
+                  className="grid grid-cols-1 md:grid-cols-4 gap-1 md:gap-4 px-6 py-4 border-b border-border last:border-0 hover:bg-muted/20 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/client-view/${c.id}`)}
+                >
+                  <span className="text-sm font-medium text-foreground">
+                    {c.clients?.full_name ?? "Unknown"}
+                  </span>
+                  <span className={`text-sm ${statusStyle(c.status)}`}>
+                    {statusLabel[c.status] ?? c.status}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {c.appointment_date ? format(new Date(c.appointment_date), "MMM d, yyyy") : "—"}
+                  </span>
+                  <span className="text-sm text-muted-foreground">—</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
