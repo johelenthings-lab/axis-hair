@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Link2 } from "lucide-react";
+import { ArrowLeft, Download, Link2, Pencil, Check, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
 import AIRecommendation from "@/components/AIRecommendation";
@@ -53,6 +54,8 @@ const ClientView = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [editingPrice, setEditingPrice] = useState(false);
+  const [priceInput, setPriceInput] = useState("");
 
   const handleRecommendationUpdate = (recommendation: string, generatedAt: string) => {
     setData((prev) => prev ? { ...prev, ai_recommendation: recommendation, ai_generated_at: generatedAt } : prev);
@@ -221,11 +224,65 @@ const ClientView = () => {
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Lifestyle</span>
                   <span className="text-sm text-foreground">{display(data.lifestyle)}</span>
                 </div>
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-center">
                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground">Estimated Cost</span>
-                  <span className="text-sm text-foreground">
-                    {data.estimated_price != null ? `$${data.estimated_price}` : "—"}
-                  </span>
+                  {editingPrice ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">$</span>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={priceInput}
+                        onChange={(e) => setPriceInput(e.target.value)}
+                        className="w-24 h-8 text-sm bg-background border-border"
+                        placeholder="0.00"
+                        autoFocus
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-accent-foreground"
+                        onClick={async () => {
+                          const newPrice = priceInput ? parseFloat(priceInput) : null;
+                          const { error } = await supabase
+                            .from("consultations")
+                            .update({ estimated_price: newPrice })
+                            .eq("id", id!);
+                          if (error) {
+                            toast({ title: "Update failed", description: error.message, variant: "destructive" });
+                          } else {
+                            setData((prev) => prev ? { ...prev, estimated_price: newPrice } : prev);
+                            toast({ title: "Price updated" });
+                          }
+                          setEditingPrice(false);
+                        }}
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-muted-foreground"
+                        onClick={() => setEditingPrice(false)}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <button
+                      className="flex items-center gap-2 group cursor-pointer bg-transparent border-none p-0"
+                      onClick={() => {
+                        setPriceInput(data.estimated_price != null ? String(data.estimated_price) : "");
+                        setEditingPrice(true);
+                      }}
+                    >
+                      <span className="text-sm text-foreground">
+                        {data.estimated_price != null ? `$${data.estimated_price}` : "—"}
+                      </span>
+                      <Pencil className="h-3 w-3 text-muted-foreground/0 group-hover:text-muted-foreground transition-colors" />
+                    </button>
+                  )}
                 </div>
               </div>
 
