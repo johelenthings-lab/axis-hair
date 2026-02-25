@@ -1,0 +1,1 @@
+ALTER TABLE public.consultations ADD COLUMN original_image_url text, ADD COLUMN preview_image_url text;

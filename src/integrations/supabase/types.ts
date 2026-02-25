@@ -54,6 +54,8 @@ export type Database = {
           inspiration_notes: string | null
           lifestyle: string | null
           maintenance_level: string | null
+          original_image_url: string | null
+          preview_image_url: string | null
           status: string
           stylist_id: string
           updated_at: string
@@ -70,6 +72,8 @@ export type Database = {
           inspiration_notes?: string | null
           lifestyle?: string | null
           maintenance_level?: string | null
+          original_image_url?: string | null
+          preview_image_url?: string | null
           status?: string
           stylist_id: string
           updated_at?: string
@@ -86,6 +90,8 @@ export type Database = {
           inspiration_notes?: string | null
           lifestyle?: string | null
           maintenance_level?: string | null
+          original_image_url?: string | null
+          preview_image_url?: string | null
           status?: string
           stylist_id?: string
           updated_at?: string
