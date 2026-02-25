@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, Link2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import SwipeReveal from "@/components/SwipeReveal";
 import AIRecommendation from "@/components/AIRecommendation";
@@ -248,15 +248,29 @@ const ClientView = () => {
                 </Button>
               </div>
 
-              <Button
-                variant="outline"
-                onClick={handleDownloadPdf}
-                disabled={generatingPdf}
-                className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
-              >
-                <Download className="h-3.5 w-3.5 mr-2" />
-                {generatingPdf ? "Generating PDF…" : "Download Consultation PDF"}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleDownloadPdf}
+                  disabled={generatingPdf}
+                  className="flex-1 tracking-[0.12em] uppercase text-xs h-12 border-border"
+                >
+                  <Download className="h-3.5 w-3.5 mr-2" />
+                  {generatingPdf ? "Generating PDF…" : "Download PDF"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const url = `${window.location.origin}/preview/${data.id}`;
+                    navigator.clipboard.writeText(url);
+                    toast({ title: "Share link copied to clipboard" });
+                  }}
+                  className="flex-1 tracking-[0.12em] uppercase text-xs h-12 border-border"
+                >
+                  <Link2 className="h-3.5 w-3.5 mr-2" />
+                  Copy Share Link
+                </Button>
+              </div>
 
               {data.status !== "cancelled" && (
                 <AlertDialog>
