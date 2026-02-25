@@ -58,6 +58,7 @@ export type Database = {
           maintenance_level: string | null
           original_image_url: string | null
           preview_image_url: string | null
+          service_type: string
           status: string
           stylist_id: string
           updated_at: string
@@ -78,6 +79,7 @@ export type Database = {
           maintenance_level?: string | null
           original_image_url?: string | null
           preview_image_url?: string | null
+          service_type?: string
           status?: string
           stylist_id: string
           updated_at?: string
@@ -98,6 +100,7 @@ export type Database = {
           maintenance_level?: string | null
           original_image_url?: string | null
           preview_image_url?: string | null
+          service_type?: string
           status?: string
           stylist_id?: string
           updated_at?: string

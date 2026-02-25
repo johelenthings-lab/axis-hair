@@ -1,0 +1,1 @@
+ALTER TABLE public.consultations ADD COLUMN service_type text NOT NULL DEFAULT 'quick_service';
