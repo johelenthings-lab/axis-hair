@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 const steps = [
-  { number: "01", title: "Create Consultation", description: "Capture client details, goals, and preferences in a guided intake flow." },
+  { number: "01", title: "Create Consultation", description: "Capture client details, goals, and preferences in a guided intake flow. Photo imaging is also available as an option to visually document and enhance your client’s experience." },
   { number: "02", title: "Generate AI Recommendation + Preview", description: "Receive a structured recommendation and visual preview powered by AI." },
   { number: "03", title: "Approve, Share, and Track Revenue", description: "Client approves, you share the result, and revenue is tracked automatically." },
 ];

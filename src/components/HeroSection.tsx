@@ -54,11 +54,11 @@ const HeroSection = () => {
           </p>
 
           <h1 className="font-display font-extrabold tracking-tight text-foreground text-4xl md:text-6xl lg:text-7xl mb-5 leading-[1.1]">
-            Run Smarter Consultations.
+            Elevate Every Consultation.
           </h1>
 
           <p className="text-base md:text-lg text-foreground/70 max-w-xl mb-10 leading-relaxed">
-            AI-powered consultation intelligence for modern stylists who want structure, confidence, and revenue clarity.
+            AI-powered consultation intelligence for modern stylists and barbers who want structure, confidence, and revenue clarity.
           </p>
 
           {/* Animated divider */}
@@ -87,9 +87,8 @@ const HeroSection = () => {
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`h-px transition-all duration-500 ${
-              i === current ? "w-10 bg-foreground" : "w-5 bg-foreground/30"
-            }`}
+            className={`h-px transition-all duration-500 ${i === current ? "w-10 bg-foreground" : "w-5 bg-foreground/30"
+              }`}
           />
         ))}
       </div>

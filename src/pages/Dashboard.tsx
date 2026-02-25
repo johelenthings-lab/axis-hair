@@ -8,6 +8,7 @@ import { format, startOfWeek, endOfWeek } from "date-fns";
 interface ConsultationRow {
   id: string;
   status: string;
+  service_type: string | null;
   estimated_price: number | null;
   appointment_date: string | null;
   clients: { full_name: string } | null;
@@ -43,7 +44,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     const { data } = await supabase
       .from("consultations")
-      .select("id, status, estimated_price, appointment_date, clients(full_name)")
+      .select("id, status, service_type, estimated_price, appointment_date, clients(full_name)")
       .order("created_at", { ascending: false });
     setConsultations((data as ConsultationRow[] | null) ?? []);
     setLoading(false);
@@ -275,7 +276,9 @@ const Dashboard = () => {
                   <span className="text-sm text-muted-foreground">
                     {c.appointment_date ? format(new Date(c.appointment_date), "MMM d, yyyy") : "—"}
                   </span>
-                  <span className="text-sm text-muted-foreground">—</span>
+                  <span className="text-sm text-muted-foreground">
+                    {c.service_type === "full_preview" ? "Full Consultation" : c.service_type === "quick_service" ? "Quick Maintenance" : "—"}
+                  </span>
                 </div>
               ))
             )}

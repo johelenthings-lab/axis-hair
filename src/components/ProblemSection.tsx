@@ -15,15 +15,16 @@ const ProblemSection = () => {
           transition={{ duration: 0.7 }}
         >
           <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-6">
-            The Problem
+            The Opportunity
           </p>
           <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl tracking-[0.05em] text-foreground mb-8 leading-tight">
-            Every appointment starts<br />with miscommunication.
+            Every appointment holds<br />the possibility of miscommunication.
           </h2>
           <div className="axis-divider max-w-[80px] mx-auto mb-8" />
           <p className="text-base md:text-lg text-foreground/65 max-w-xl mx-auto leading-relaxed">
-            Clients describe what they want in words. Stylists interpret through experience. 
-            The gap between expectation and outcome costs trust, time, and revenue — every single day.
+            Clients describe what they want in words. Stylists and barbers interpret through experience and skill.
+            The gap between expectation and outcome can cost trust, time, and revenue — before scissors ever touch hair.
+            AXIS HAIR™ closes that gap before it opens.
           </p>
         </motion.div>
       </div>
