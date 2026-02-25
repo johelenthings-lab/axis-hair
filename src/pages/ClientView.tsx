@@ -192,11 +192,21 @@ const ClientView = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="border border-border rounded-sm p-6 bg-muted/30 flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-accent animate-pulse" />
-                  <span className="text-sm text-muted-foreground">
-                    Generating professional recommendation…
-                  </span>
+                <div className="border border-border rounded-sm p-6 bg-muted/30">
+                  <div className="flex items-center gap-3">
+                    {!regenerating && <div className="h-3 w-3 rounded-full bg-accent animate-pulse" />}
+                    <span className="text-sm text-muted-foreground">
+                      {regenerating ? "Generating recommendation…" : "No recommendation yet."}
+                    </span>
+                  </div>
+                  <Button
+                    onClick={regenerateRecommendation}
+                    disabled={regenerating}
+                    className="mt-4 h-10 tracking-[0.12em] uppercase text-xs font-semibold"
+                  >
+                    {regenerating && <Loader2 className="h-3 w-3 animate-spin" />}
+                    {regenerating ? "Generating..." : "Generate Recommendation"}
+                  </Button>
                 </div>
               )}
             </div>
