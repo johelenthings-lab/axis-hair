@@ -53,8 +53,8 @@ const SolutionSection = () => {
               transition={{ duration: 0.6, delay: 0.15 * i }}
               className="axis-card"
             >
-              <mod.icon className="w-5 h-5 text-foreground mb-6" strokeWidth={1.5} />
-              <h3 className="font-display font-bold text-lg tracking-[0.05em] text-foreground mb-3">
+              <mod.icon className="w-4 h-4 text-foreground/70 mb-6" strokeWidth={1.5} />
+              <h3 className="font-display font-extrabold text-lg tracking-[0.05em] text-foreground mb-3">
                 {mod.title}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">

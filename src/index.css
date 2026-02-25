@@ -22,16 +22,16 @@
     --secondary-foreground: 30 10% 12%;
 
     --muted: 35 10% 93%;
-    --muted-foreground: 30 6% 38%;
+    --muted-foreground: 30 8% 32%;
 
-    --accent: 30 8% 10%;
+    --accent: 30 10% 7%;
     --accent-foreground: 40 20% 97%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 30 8% 85%;
-    --input: 30 8% 85%;
+    --border: 30 8% 82%;
+    --input: 30 8% 82%;
     --ring: 30 10% 12%;
 
     --radius: 0.25rem;
@@ -53,7 +53,7 @@
     --axis-divider: 30 8% 80%;
     --axis-dashboard-bg: 30 10% 8%;
     --axis-dashboard-fg: 40 20% 92%;
-    --axis-card-border: 30 8% 78%;
+    --axis-card-border: 30 8% 72%;
     --axis-card-hover: 40 18% 99%;
   }
 
@@ -118,25 +118,26 @@
     @apply border rounded-sm p-8 transition-all duration-300;
     border-color: hsl(var(--axis-card-border));
     background: hsl(var(--card));
+    box-shadow: 0 2px 8px -4px hsl(var(--axis-charcoal) / 0.06);
   }
 
   .axis-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px -12px hsl(var(--axis-charcoal) / 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px -12px hsl(var(--axis-charcoal) / 0.18);
     background: hsl(var(--axis-card-hover));
   }
 
   .axis-grid-bg {
     background-image: 
-      linear-gradient(hsl(var(--axis-divider) / 0.3) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--axis-divider) / 0.3) 1px, transparent 1px);
+      linear-gradient(hsl(var(--axis-divider) / 0.18) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--axis-divider) / 0.18) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 
   .axis-grid-bg-dark {
     background-image: 
-      linear-gradient(hsl(var(--axis-dashboard-fg) / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--axis-dashboard-fg) / 0.05) 1px, transparent 1px);
+      linear-gradient(hsl(var(--axis-dashboard-fg) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--axis-dashboard-fg) / 0.04) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 }
