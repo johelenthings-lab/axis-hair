@@ -60,15 +60,35 @@ const Dashboard = () => {
   const total = consultations.length;
   const approvedCount = consultations.filter((c) => c.status === "approved").length;
   const approvalRate = total > 0 ? Math.round((approvedCount / total) * 100) : 0;
-  const weeklyRevenue = thisWeek
-    .filter((c) => c.status === "approved")
-    .reduce((sum, c) => sum + (c.estimated_price ?? 0), 0);
+
+  const approvedWithPrice = consultations.filter(
+    (c) => c.status === "approved" && c.estimated_price != null && c.appointment_date != null
+  );
+
+  const revenueIn = (start: Date, end: Date) =>
+    approvedWithPrice
+      .filter((c) => { const d = new Date(c.appointment_date!); return d >= start && d <= end; })
+      .reduce((sum, c) => sum + (c.estimated_price ?? 0), 0);
+
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  const yearStart = new Date(now.getFullYear(), 0, 1);
+  const yearEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+
+  const weeklyRevenue = revenueIn(weekStart, weekEnd);
+  const monthlyRevenue = revenueIn(monthStart, monthEnd);
+  const yearlyRevenue = revenueIn(yearStart, yearEnd);
+  const lifetimeRevenue = approvedWithPrice.reduce((sum, c) => sum + (c.estimated_price ?? 0), 0);
+
+  const fmt = (v: number) => `$${v.toLocaleString()}`;
 
   const metrics = [
     { label: "This Week's Consultations", value: String(thisWeek.length), sub: `${total} total` },
     { label: "Client Approval Rate", value: `${approvalRate}%`, sub: total > 0 ? `${approvedCount} of ${total}` : "No data yet" },
-    { label: "Rebooking Rate", value: "—", sub: "Coming soon" },
-    { label: "Est. Revenue This Week", value: `$${weeklyRevenue.toLocaleString()}`, sub: "Approved consultations" },
+    { label: "Est. Revenue This Week", value: fmt(weeklyRevenue), sub: "Approved consultations" },
+    { label: "Est. Revenue This Month", value: fmt(monthlyRevenue), sub: format(monthStart, "MMMM yyyy") },
+    { label: "Est. Revenue This Year", value: fmt(yearlyRevenue), sub: String(now.getFullYear()) },
+    { label: "Total Lifetime Revenue", value: fmt(lifetimeRevenue), sub: `${approvedWithPrice.length} approved` },
   ];
 
   const handleLogout = async () => {
