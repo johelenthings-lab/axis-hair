@@ -231,8 +231,16 @@ const ClientView = () => {
                   Request Adjustment
                 </Button>
               </div>
-            </div>
-          </div>
+
+              <Button
+                variant="outline"
+                onClick={handleDownloadPdf}
+                disabled={generatingPdf}
+                className="w-full tracking-[0.12em] uppercase text-xs h-12 border-border"
+              >
+                <Download className="h-3.5 w-3.5 mr-2" />
+                {generatingPdf ? "Generating PDF…" : "Download Consultation PDF"}
+              </Button>
         </div>
       </div>
     </div>
