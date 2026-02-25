@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus, Clock, CheckCircle } from "lucide-react";
-import { format, startOfWeek, endOfWeek } from "date-fns";
+import { format, startOfWeek, endOfWeek, subMonths } from "date-fns";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 interface ConsultationRow {
   id: string;
@@ -91,6 +92,21 @@ const Dashboard = () => {
     { label: "Total Lifetime Revenue", value: fmt(lifetimeRevenue), sub: `${approvedWithPrice.length} approved` },
   ];
 
+  // Build 12-month revenue trend
+  const monthlyTrend = useMemo(() => {
+    const months: { name: string; revenue: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = subMonths(now, i);
+      const mStart = new Date(d.getFullYear(), d.getMonth(), 1);
+      const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+      months.push({
+        name: format(mStart, "MMM"),
+        revenue: revenueIn(mStart, mEnd),
+      });
+    }
+    return months;
+  }, [consultations]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -132,6 +148,55 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Revenue Trend */}
+      <section className="max-w-7xl mx-auto px-6 md:px-12 pt-12">
+        <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-6">
+          Monthly Revenue Trend
+        </h3>
+        <div className="border border-border rounded-sm p-6 bg-card">
+          <ResponsiveContainer width="100%" height={260}>
+            <AreaChart data={monthlyTrend} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+              <defs>
+                <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--accent-foreground))" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="hsl(var(--accent-foreground))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                axisLine={{ stroke: "hsl(var(--border))" }}
+                tickLine={false}
+              />
+              <YAxis
+                tickFormatter={(v: number) => `$${v}`}
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                axisLine={false}
+                tickLine={false}
+                width={60}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+                formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="hsl(var(--accent-foreground))"
+                strokeWidth={2}
+                fill="url(#revGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </section>
 
