@@ -26,10 +26,10 @@ const Navbar = () => {
           AXIS HAIR™
         </span>
         <div className="hidden md:flex items-center gap-10">
-          {["Platform", "Results", "Pricing"].map((item) => (
+          {["Platform", "Dashboard", "Pricing"].map((item) => (
             <a
               key={item}
-              href={`#${item.toLowerCase()}`}
+              href={`#${item === "Dashboard" ? "results" : item.toLowerCase()}`}
               className="text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
             >
               {item}
