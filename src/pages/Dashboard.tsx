@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Plus, Clock, CheckCircle } from "lucide-react";
-import { format, startOfWeek, endOfWeek, subMonths } from "date-fns";
+import { format, startOfWeek, endOfWeek, subMonths, subWeeks } from "date-fns";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 interface ConsultationRow {
@@ -34,6 +34,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [consultations, setConsultations] = useState<ConsultationRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trendGranularity, setTrendGranularity] = useState<"monthly" | "weekly">("monthly");
 
   useEffect(() => {
     fetchData();
@@ -107,6 +108,22 @@ const Dashboard = () => {
     return months;
   }, [consultations]);
 
+  // Build 12-week revenue trend
+  const weeklyTrend = useMemo(() => {
+    const weeks: { name: string; revenue: number }[] = [];
+    for (let i = 11; i >= 0; i--) {
+      const wStart = startOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
+      const wEnd = endOfWeek(subWeeks(now, i), { weekStartsOn: 1 });
+      weeks.push({
+        name: format(wStart, "MMM d"),
+        revenue: revenueIn(wStart, wEnd),
+      });
+    }
+    return weeks;
+  }, [consultations]);
+
+  const trendData = trendGranularity === "monthly" ? monthlyTrend : weeklyTrend;
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -153,12 +170,36 @@ const Dashboard = () => {
 
       {/* Revenue Trend */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 pt-12">
-        <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-6">
-          Monthly Revenue Trend
-        </h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground">
+            Revenue Trend
+          </h3>
+          <div className="flex gap-1 border border-border rounded-sm overflow-hidden">
+            <button
+              onClick={() => setTrendGranularity("weekly")}
+              className={`px-3 py-1.5 text-xs tracking-[0.1em] uppercase transition-colors ${
+                trendGranularity === "weekly"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Weekly
+            </button>
+            <button
+              onClick={() => setTrendGranularity("monthly")}
+              className={`px-3 py-1.5 text-xs tracking-[0.1em] uppercase transition-colors ${
+                trendGranularity === "monthly"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+          </div>
+        </div>
         <div className="border border-border rounded-sm p-6 bg-card">
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={monthlyTrend} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+            <AreaChart data={trendData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--accent-foreground))" stopOpacity={0.25} />
