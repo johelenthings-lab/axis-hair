@@ -1,0 +1,97 @@
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import salon1 from "@/assets/salon-1.jpg";
+import salon2 from "@/assets/salon-2.jpg";
+import salon3 from "@/assets/salon-3.jpg";
+
+const images = [salon1, salon2, salon3];
+
+const HeroSection = () => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="relative h-screen w-full overflow-hidden">
+      {/* Background images */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={current}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="absolute inset-0"
+        >
+          <div
+            className="absolute inset-0 animate-subtle-drift bg-cover bg-center"
+            style={{ backgroundImage: `url(${images[current]})` }}
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Ivory overlay */}
+      <div className="absolute inset-0 bg-axis-ivory/70" />
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <h1 className="font-display font-bold tracking-[0.25em] uppercase text-foreground text-4xl md:text-6xl lg:text-7xl mb-8">
+            AXIS HAIR™
+          </h1>
+
+          <div className="space-y-1 mb-8">
+            <p className="font-display text-lg md:text-xl tracking-[0.1em] text-foreground/80">
+              Defined by structure.
+            </p>
+            <p className="font-display text-lg md:text-xl tracking-[0.1em] text-foreground/80">
+              Designed for you.
+            </p>
+          </div>
+
+          {/* Animated divider */}
+          <div className="w-0 animate-divider-expand h-px bg-foreground/30 mb-10 max-w-[200px]" />
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a
+              href="#upload"
+              className="inline-block text-center text-xs tracking-[0.15em] uppercase bg-primary text-primary-foreground px-8 py-4 hover:opacity-90 transition-opacity font-medium"
+            >
+              Start Your Consultation
+            </a>
+            <a
+              href="#platform"
+              className="inline-block text-center text-xs tracking-[0.15em] uppercase border border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
+            >
+              Explore the Platform
+            </a>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Bottom indicator */}
+      <div className="absolute bottom-8 left-6 md:left-16 lg:left-24 flex gap-3 z-10">
+        {images.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`h-px transition-all duration-500 ${
+              i === current ? "w-10 bg-foreground" : "w-5 bg-foreground/30"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
