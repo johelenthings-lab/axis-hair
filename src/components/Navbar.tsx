@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -36,12 +38,12 @@ const Navbar = () => {
             </a>
           ))}
         </div>
-        <a
-          href="#pricing"
+        <button
+          onClick={() => navigate("/signup")}
           className="text-xs tracking-[0.18em] uppercase bg-accent text-accent-foreground px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
         >
           Get Started
-        </a>
+        </button>
       </div>
     </motion.nav>
   );
