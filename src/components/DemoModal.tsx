@@ -104,7 +104,7 @@ const DemoModal = ({ open, onClose }: DemoModalProps) => {
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${salonConsultation})` }}
             />
-            <div className="absolute inset-0 bg-axis-charcoal/88" />
+            <div className="absolute inset-0 bg-axis-charcoal/93" />
             <div
               className="absolute inset-0"
               style={{
