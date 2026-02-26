@@ -1,21 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, ArrowRight } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, ClipboardList, Sparkles, ScanFace, ShieldCheck } from "lucide-react";
 
 const slides = [
   {
+    icon: ClipboardList,
     title: "Structured Consultation",
     text: "Clients answer guided questions for clarity and precision.",
   },
   {
+    icon: Sparkles,
     title: "Smart Style Selection",
     text: "System narrows options to 3 curated styles.",
   },
   {
+    icon: ScanFace,
     title: "Visual Try-On Preview",
     text: "Clients see styles placed on their photo.",
   },
   {
+    icon: ShieldCheck,
     title: "Stylist Confidence",
     text: "Reduce miscommunication. Elevate every appointment.",
   },
@@ -120,6 +124,12 @@ const DemoModal = ({ open, onClose }: DemoModalProps) => {
                   transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                   className="w-full"
                 >
+                  <div className="w-12 h-12 flex items-center justify-center border border-border mb-6">
+                    {(() => {
+                      const Icon = slides[current].icon;
+                      return <Icon className="h-5 w-5 text-foreground/70" strokeWidth={1.5} />;
+                    })()}
+                  </div>
                   <h2 className="font-display text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase text-foreground mb-4 leading-tight">
                     {slides[current].title}
                   </h2>
