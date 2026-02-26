@@ -197,14 +197,14 @@ const NewConsultation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-x-hidden">
       {/* Salon background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${salon1})` }}
       />
-      <div className="absolute inset-0 bg-axis-ivory/82" />
-      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.10) 100%)" }} />
+      <div className="absolute inset-0 bg-axis-ivory/68" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 45%, hsl(30 10% 8% / 0.18) 100%)" }} />
       <header className="relative z-10 border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
