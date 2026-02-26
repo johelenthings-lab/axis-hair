@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -30,6 +30,21 @@ const NewConsultation = () => {
   const steps = isQuick ? QUICK_STEPS : FULL_STEPS;
   const totalSteps = steps.length;
   const isReviewStep = currentStep === totalSteps - 1;
+
+  const isStepComplete = (stepIndex: number): boolean => {
+    if (isQuick) {
+      // Quick: step 0 = client info, step 1 = review
+      if (stepIndex === 0) return !!formData.clientName.trim();
+      return false; // review is never "complete" ahead of time
+    }
+    switch (stepIndex) {
+      case 0: return !!formData.clientName.trim();
+      case 1: return !!formData.faceShape;
+      case 2: return !!formData.hairTexture && !!formData.desiredLength;
+      case 3: return !!formData.maintenanceLevel && !!formData.lifestyle;
+      default: return false;
+    }
+  };
 
   const handleChange = useCallback(
     <K extends keyof ConsultationFormData>(key: K, value: ConsultationFormData[K]) => {
@@ -196,17 +211,28 @@ const NewConsultation = () => {
           </div>
           <Progress value={((currentStep + 1) / totalSteps) * 100} className="h-1" />
           <div className="flex justify-between mt-2">
-            {steps.map((label, i) => (
-              <button
-                key={label}
-                onClick={() => goToStep(i)}
-                className={`text-[10px] tracking-[0.15em] uppercase transition-colors ${
-                  i === currentStep ? "text-accent font-semibold" : "text-muted-foreground/60 hover:text-muted-foreground"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+            {steps.map((label, i) => {
+              const completed = isStepComplete(i);
+              const isCurrent = i === currentStep;
+              return (
+                <button
+                  key={label}
+                  onClick={() => goToStep(i)}
+                  className={`flex items-center gap-1 text-[10px] tracking-[0.15em] uppercase transition-colors ${
+                    isCurrent
+                      ? "text-accent font-semibold"
+                      : completed
+                        ? "text-accent/70 hover:text-accent"
+                        : "text-muted-foreground/60 hover:text-muted-foreground"
+                  }`}
+                >
+                  {completed && !isCurrent && (
+                    <CircleCheck className="h-3 w-3 shrink-0" />
+                  )}
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
