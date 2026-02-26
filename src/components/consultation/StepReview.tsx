@@ -2,7 +2,7 @@ import { useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Upload, ImageIcon, Pencil } from "lucide-react";
+import { Upload, ImageIcon, Pencil, X } from "lucide-react";
 import type { ConsultationFormData, StepProps } from "./types";
 
 interface StepReviewProps extends StepProps {
@@ -151,13 +151,25 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
                   alt="Client preview"
                   className="h-20 w-20 rounded-sm object-cover border border-border shrink-0"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-foreground truncate">{data.clientPhoto.name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {(data.clientPhoto.size / 1024).toFixed(0)} KB
                   </p>
                   <p className="text-xs text-accent mt-1 hover:underline">Click to change</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onChange("clientPhoto", null);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }}
+                  className="shrink-0 p-1.5 rounded-sm border border-border text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors"
+                  aria-label="Remove photo"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
             ) : (
               <>
