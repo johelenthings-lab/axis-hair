@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,7 @@ const Login = () => {
   const [resetLoading, setResetLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +64,7 @@ const Login = () => {
 
           <div className="axis-card p-10">
             <h1 className="font-display text-2xl font-semibold tracking-[0.15em] uppercase text-foreground mb-2">
-              Reset Password
+              {t("reset_password")}
             </h1>
             <p className="text-sm text-muted-foreground mb-8">
               Enter your email and we'll send you a reset link.
@@ -89,7 +91,7 @@ const Login = () => {
                 disabled={resetLoading}
                 className="w-full bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12"
               >
-                {resetLoading ? "Sending..." : "Send Reset Link"}
+                {resetLoading ? "..." : t("send_reset_link")}
               </Button>
             </form>
 
@@ -99,7 +101,7 @@ const Login = () => {
                 onClick={() => setResetMode(false)}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                ← Back to Sign In
+                {t("back_to_sign_in")}
               </button>
             </div>
           </div>
@@ -118,10 +120,10 @@ const Login = () => {
         </div>
 
         <div className="axis-card p-10">
-          <h1 className="font-display text-2xl font-semibold tracking-[0.15em] uppercase text-foreground mb-2">
-            Sign In
-          </h1>
-          <p className="text-sm text-muted-foreground mb-8">Access your stylist dashboard.</p>
+            <h1 className="font-display text-2xl font-semibold tracking-[0.15em] uppercase text-foreground mb-2">
+              {t("login")}
+            </h1>
+            <p className="text-sm text-muted-foreground mb-8">{t("access_dashboard")}</p>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
@@ -169,7 +171,7 @@ const Login = () => {
                 onClick={() => setResetMode(true)}
                 className="text-xs tracking-[0.08em] text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
               >
-                Forgot password?
+                {t("forgot_password")}
               </button>
             </div>
 
@@ -178,15 +180,15 @@ const Login = () => {
               disabled={loading}
               className="w-full bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? t("signing_in") : t("login")}
             </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-border text-center">
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              {t("no_account")}{" "}
               <Link to="/signup" className="text-foreground font-medium hover:underline">
-                Create one
+                {t("create_one")}
               </Link>
             </p>
           </div>

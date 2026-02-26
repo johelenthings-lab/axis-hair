@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { language, setLanguage, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -38,12 +40,36 @@ const Navbar = () => {
             </a>
           ))}
         </div>
-        <button
-          onClick={() => navigate("/signup")}
-          className="text-xs tracking-[0.18em] uppercase bg-accent text-accent-foreground px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
-        >
-          Get Started
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center border border-border rounded-sm overflow-hidden">
+            <button
+              onClick={() => setLanguage("en")}
+              className={`text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 font-semibold transition-colors ${
+                language === "en"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage("pt")}
+              className={`text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 font-semibold transition-colors ${
+                language === "pt"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              PT
+            </button>
+          </div>
+          <button
+            onClick={() => navigate("/signup")}
+            className="text-xs tracking-[0.18em] uppercase bg-accent text-accent-foreground px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
+          >
+            {t("get_started")}
+          </button>
+        </div>
       </div>
     </motion.nav>
   );

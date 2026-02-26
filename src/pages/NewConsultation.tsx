@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 import StepClientInfo from "@/components/consultation/StepClientInfo";
 import StepFaceShape from "@/components/consultation/StepFaceShape";
@@ -22,6 +23,7 @@ const QUICK_STEPS = ["Client Info", "Review"];
 const NewConsultation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -209,7 +211,7 @@ const NewConsultation = () => {
         <div className="mb-10">
           <div className="flex items-center justify-between mb-3">
             <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-[0.15em] uppercase text-foreground">
-              New Consultation
+              {t("new_consultation")}
             </h1>
             <span className="text-xs text-muted-foreground tracking-wide">
               Step {currentStep + 1} of {totalSteps}
@@ -271,7 +273,7 @@ const NewConsultation = () => {
                 onClick={() => navigate("/dashboard")}
                 className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
               >
-                View Dashboard
+                {t("view_dashboard")}
               </Button>
             </div>
           </motion.div>
@@ -286,7 +288,7 @@ const NewConsultation = () => {
                 onClick={handleBack}
                 className="tracking-[0.12em] uppercase text-xs h-12 px-8 border-border"
               >
-                <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
+                <ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("back")}
               </Button>
             )}
 
@@ -295,7 +297,7 @@ const NewConsultation = () => {
                 onClick={handleNext}
                 className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
               >
-                Next <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                {t("next")} <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>
             ) : (
               <Button
@@ -303,9 +305,9 @@ const NewConsultation = () => {
                 disabled={loading}
                 className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
               >
-                {loading ? "Creating..." : (
+                {loading ? t("creating") : (
                   <>
-                    <Check className="h-3.5 w-3.5 mr-1" /> Generate Styles
+                    <Check className="h-3.5 w-3.5 mr-1" /> {t("generate_styles")}
                   </>
                 )}
               </Button>
@@ -316,7 +318,7 @@ const NewConsultation = () => {
               onClick={() => navigate("/dashboard")}
               className="tracking-[0.12em] uppercase text-xs h-12 px-4 text-muted-foreground"
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </div>
         )}
