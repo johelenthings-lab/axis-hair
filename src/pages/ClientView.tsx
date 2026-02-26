@@ -170,7 +170,7 @@ const ClientView = () => {
   const display = (val: string | null) => (val ? labelMap[val] ?? val : "—");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background axis-salon-blur axis-silhouette-left overflow-hidden">
       <header className="border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
@@ -183,7 +183,7 @@ const ClientView = () => {
         </span>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-10">
           {/* Preview Area */}
           <div>

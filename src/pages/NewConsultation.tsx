@@ -194,7 +194,7 @@ const NewConsultation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background axis-salon-overlay axis-silhouette overflow-hidden">
       <header className="border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
@@ -204,7 +204,7 @@ const NewConsultation = () => {
         </span>
       </header>
 
-      <div className="max-w-3xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-3xl mx-auto px-6 md:px-12 py-12 relative z-10">
         {/* Progress */}
         <div className="mb-10">
           <div className="flex items-center justify-between mb-3">
