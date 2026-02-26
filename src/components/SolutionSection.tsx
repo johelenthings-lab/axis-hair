@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Eye, Sparkles, BarChart3 } from "lucide-react";
+import salon2 from "@/assets/salon-2.jpg";
 
 const pillars = [
   {
@@ -28,8 +29,15 @@ const SolutionSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="platform" ref={ref} className="py-28 md:py-36 px-6 md:px-16">
-      <div className="max-w-6xl mx-auto">
+    <section id="platform" ref={ref} className="relative py-28 md:py-36 px-6 md:px-16 overflow-hidden">
+      {/* Salon background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${salon2})` }}
+      />
+      <div className="absolute inset-0 bg-axis-ivory/80" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.12) 100%)" }} />
+      <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
