@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, ImageIcon, Pencil, X } from "lucide-react";
 import type { ConsultationFormData, StepProps } from "./types";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface StepReviewProps extends StepProps {
   onGoToStep: (step: number) => void;
@@ -17,11 +18,13 @@ const Section = ({
   title,
   stepIndex,
   onEdit,
+  editLabel,
   children,
 }: {
   title: string;
   stepIndex: number;
   onEdit: (step: number) => void;
+  editLabel: string;
   children: React.ReactNode;
 }) => (
   <div className="border border-border rounded-sm p-5">
@@ -33,7 +36,7 @@ const Section = ({
         onClick={() => onEdit(stepIndex)}
         className="text-xs text-accent hover:text-accent/80 gap-1 h-7 px-2"
       >
-        <Pencil className="h-3 w-3" /> Edit
+        <Pencil className="h-3 w-3" /> {editLabel}
       </Button>
     </div>
     {children}
@@ -49,25 +52,28 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 
 const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProps) => {
   const isFullPreview = data.serviceType === "full_preview";
+  const { t } = useLanguage();
   const photoPreviewUrl = useMemo(
     () => (data.clientPhoto ? URL.createObjectURL(data.clientPhoto) : null),
     [data.clientPhoto],
   );
 
+  const editLabel = t("edit");
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="font-display text-xs tracking-[0.25em] uppercase text-muted-foreground mb-2">
-          Review & Confirm
+          {t("review_confirm")}
         </h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Please review the consultation details below. Click "Edit" to change any section.
+          {t("review_confirm")}
         </p>
       </div>
 
       <div className="space-y-4">
         {/* Client Info */}
-        <Section title="Client Information" stepIndex={0} onEdit={onGoToStep}>
+        <Section title="Client Information" stepIndex={0} onEdit={onGoToStep} editLabel={editLabel}>
           <Row label="Name" value={data.clientName || "—"} />
           <Row label="Email" value={data.clientEmail || "—"} />
           <Row label="Phone" value={data.clientPhone || "—"} />
@@ -76,14 +82,14 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
 
         {/* Face Shape */}
         {isFullPreview && (
-          <Section title="Face Shape" stepIndex={1} onEdit={onGoToStep}>
+          <Section title="Face Shape" stepIndex={1} onEdit={onGoToStep} editLabel={editLabel}>
             <Row label="Face Shape" value={displayValue(data.faceShape)} />
           </Section>
         )}
 
         {/* Hair Texture */}
         {isFullPreview && (
-          <Section title="Hair Texture & Length" stepIndex={2} onEdit={onGoToStep}>
+          <Section title="Hair Texture & Length" stepIndex={2} onEdit={onGoToStep} editLabel={editLabel}>
             <Row label="Hair Texture" value={displayValue(data.hairTexture)} />
             <Row label="Desired Length" value={displayValue(data.desiredLength)} />
           </Section>
@@ -91,7 +97,7 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
 
         {/* Lifestyle */}
         {isFullPreview && (
-          <Section title="Lifestyle & Maintenance" stepIndex={3} onEdit={onGoToStep}>
+          <Section title="Lifestyle & Maintenance" stepIndex={3} onEdit={onGoToStep} editLabel={editLabel}>
             <Row label="Maintenance" value={displayValue(data.maintenanceLevel)} />
             <Row label="Lifestyle" value={displayValue(data.lifestyle)} />
             {data.inspirationNotes && <Row label="Notes" value={data.inspirationNotes} />}
