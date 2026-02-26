@@ -1,10 +1,25 @@
 import { ImageIcon } from "lucide-react";
+import { motion } from "framer-motion";
 import type { HairstyleAsset } from "@/lib/styleLibrary";
 
 interface StyleResultsGridProps {
   styles: HairstyleAsset[];
   remaining: number;
 }
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 8 },
+  visible: (i: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1,
+      duration: 0.28,
+      ease: [0.4, 0, 0.2, 1] as [number, number, number, number],
+    },
+  }),
+};
 
 const StyleResultsGrid = ({ styles, remaining }: StyleResultsGridProps) => {
   if (styles.length === 0) return null;
@@ -21,19 +36,21 @@ const StyleResultsGrid = ({ styles, remaining }: StyleResultsGridProps) => {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        {styles.map((style) => (
-          <div
+        {styles.map((style, i) => (
+          <motion.div
             key={style.id}
-            className="group relative border border-border rounded-sm overflow-hidden bg-muted/30 transition-colors hover:border-accent/40"
+            custom={i}
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
+            className="group relative border border-border rounded-sm overflow-hidden bg-muted/30 transition-all duration-200 ease-in-out hover:border-accent/40 hover:shadow-sm hover:-translate-y-0.5"
           >
-            {/* Placeholder area — real PNGs will render here once uploaded */}
             <div className="aspect-[3/4] flex items-center justify-center bg-muted/20">
               <img
                 src={style.url}
                 alt={style.label}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // If asset doesn't exist yet, show icon placeholder
                   e.currentTarget.style.display = "none";
                   e.currentTarget.nextElementSibling?.classList.remove("hidden");
                 }}
@@ -50,7 +67,7 @@ const StyleResultsGrid = ({ styles, remaining }: StyleResultsGridProps) => {
                 {style.filename}
               </p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
