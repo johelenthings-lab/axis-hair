@@ -91,13 +91,12 @@ const NewConsultation = () => {
     }
   };
 
+  const hasPhoto = !!formData.clientPhoto;
+  const isFullNoPhoto = formData.serviceType === "full_preview" && !hasPhoto;
+
   const handleSubmit = async () => {
     if (!formData.clientName.trim()) {
       toast({ title: "Client name is required", variant: "destructive" });
-      return;
-    }
-    if (formData.serviceType === "full_preview" && !formData.clientPhoto) {
-      toast({ title: "Client photo is required for full consultations", variant: "destructive" });
       return;
     }
 
@@ -308,17 +307,36 @@ const NewConsultation = () => {
                 {t("next")} <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>
             ) : (
-              <Button
-                onClick={handleSubmit}
-                disabled={loading}
-                className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
-              >
-                {loading ? t("creating") : (
-                  <>
-                    <Check className="h-3.5 w-3.5 mr-1" /> {t("generate_styles")}
-                  </>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={loading || isFullNoPhoto}
+                    className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
+                  >
+                    {loading ? t("creating") : (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1" /> {t("generate_styles")}
+                      </>
+                    )}
+                  </Button>
+                  {isFullNoPhoto && (
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={loading}
+                      variant="outline"
+                      className="tracking-[0.12em] uppercase text-xs h-12 px-8 border-border"
+                    >
+                      {loading ? t("creating") : "Book Without Styles"}
+                    </Button>
+                  )}
+                </div>
+                {isFullNoPhoto && (
+                  <p className="text-xs text-muted-foreground italic pl-0.5">
+                    Upload a photo to generate AI style previews, or book now and add one later.
+                  </p>
                 )}
-              </Button>
+              </div>
             )}
 
             <Button
