@@ -1,7 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Eye, Sparkles, BarChart3 } from "lucide-react";
-import salon2 from "@/assets/salon-2.jpg";
+import salonPlatform from "@/assets/salon-platform.jpg";
 
 const pillars = [
   {
@@ -33,7 +33,7 @@ const SolutionSection = () => {
       {/* Salon background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${salon2})` }}
+        style={{ backgroundImage: `url(${salonPlatform})` }}
       />
       <div className="absolute inset-0 bg-axis-ivory/80" />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.12) 100%)" }} />

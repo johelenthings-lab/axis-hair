@@ -1,7 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import SwipeReveal from "./SwipeReveal";
-import salon3 from "@/assets/salon-3.jpg";
+import salonResults from "@/assets/salon-results.jpg";
 
 const ResultsSection = () => {
   const ref = useRef(null);
@@ -12,7 +12,7 @@ const ResultsSection = () => {
       {/* Salon background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${salon3})` }}
+        style={{ backgroundImage: `url(${salonResults})` }}
       />
       <div className="absolute inset-0 bg-axis-ivory/78" />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.15) 100%)" }} />
