@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 import StepClientInfo from "@/components/consultation/StepClientInfo";
 import StepFaceShape from "@/components/consultation/StepFaceShape";
@@ -21,6 +22,7 @@ const NewConsultation = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState<ConsultationFormData>(INITIAL_FORM_DATA);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,7 +41,10 @@ const NewConsultation = () => {
   );
 
   const goToStep = (step: number) => {
-    if (step >= 0 && step < totalSteps) setCurrentStep(step);
+    if (step >= 0 && step < totalSteps) {
+      setDirection(step > currentStep ? 1 : -1);
+      setCurrentStep(step);
+    }
   };
 
   const canAdvance = () => {
@@ -52,11 +57,17 @@ const NewConsultation = () => {
       toast({ title: "Please fill in required fields", variant: "destructive" });
       return;
     }
-    if (currentStep < totalSteps - 1) setCurrentStep((s) => s + 1);
+    if (currentStep < totalSteps - 1) {
+      setDirection(1);
+      setCurrentStep((s) => s + 1);
+    }
   };
 
   const handleBack = () => {
-    if (currentStep > 0) setCurrentStep((s) => s - 1);
+    if (currentStep > 0) {
+      setDirection(-1);
+      setCurrentStep((s) => s - 1);
+    }
   };
 
   const handleSubmit = async () => {
@@ -199,8 +210,20 @@ const NewConsultation = () => {
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="min-h-[320px]">{renderStep()}</div>
+        <div className="min-h-[320px] overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              initial={{ x: direction * 60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: direction * -60, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Navigation */}
         <div className="pt-8 flex items-center gap-3">
