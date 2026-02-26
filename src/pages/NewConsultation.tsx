@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
-import salon1 from "@/assets/salon-1.jpg";
+import salonConsultation from "@/assets/salon-consultation.jpg";
 
 import StepClientInfo from "@/components/consultation/StepClientInfo";
 import StepFaceShape from "@/components/consultation/StepFaceShape";
@@ -201,7 +201,7 @@ const NewConsultation = () => {
       {/* Salon background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${salon1})` }}
+        style={{ backgroundImage: `url(${salonConsultation})` }}
       />
       <div className="absolute inset-0 bg-axis-ivory/68" />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 45%, hsl(30 10% 8% / 0.18) 100%)" }} />
