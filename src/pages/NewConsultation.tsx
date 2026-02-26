@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, CircleCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
+import salon1 from "@/assets/salon-1.jpg";
 
 import StepClientInfo from "@/components/consultation/StepClientInfo";
 import StepFaceShape from "@/components/consultation/StepFaceShape";
@@ -196,8 +197,15 @@ const NewConsultation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background axis-salon-overlay axis-silhouette overflow-hidden">
-      <header className="border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Salon background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${salon1})` }}
+      />
+      <div className="absolute inset-0 bg-axis-ivory/82" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.10) 100%)" }} />
+      <header className="relative z-10 border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
         </Button>

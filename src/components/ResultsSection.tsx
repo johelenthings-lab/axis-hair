@@ -1,14 +1,23 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import SwipeReveal from "./SwipeReveal";
+import salon3 from "@/assets/salon-3.jpg";
 
 const ResultsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="results" ref={ref} className="py-24 md:py-32 px-6 md:px-16">
-      <div className="max-w-5xl mx-auto">
+    <section id="results" ref={ref} className="relative py-24 md:py-32 px-6 md:px-16 overflow-hidden">
+      {/* Salon background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${salon3})` }}
+      />
+      <div className="absolute inset-0 bg-axis-ivory/78" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.15) 100%)" }} />
+
+      <div className="max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
