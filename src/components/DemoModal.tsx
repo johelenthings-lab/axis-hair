@@ -102,14 +102,14 @@ const DemoModal = ({ open, onClose }: DemoModalProps) => {
             {/* Background image */}
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${salonConsultation})` }}
+              style={{ backgroundImage: `url(${salonConsultation})`, opacity: 0.06 }}
             />
-            <div className="absolute inset-0 bg-axis-charcoal/96" />
+            <div className="absolute inset-0 bg-axis-charcoal" />
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(ellipse at 30% 20%, hsl(30 10% 18% / 0.4) 0%, transparent 60%), radial-gradient(ellipse at 80% 90%, hsl(30 10% 8% / 0.5) 0%, transparent 50%)",
+                  "radial-gradient(ellipse at 30% 20%, hsl(30 10% 22% / 0.5) 0%, transparent 60%), radial-gradient(ellipse at 80% 90%, hsl(30 10% 12% / 0.6) 0%, transparent 50%)",
               }}
             />
 
