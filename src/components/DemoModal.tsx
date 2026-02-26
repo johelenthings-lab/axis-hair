@@ -104,7 +104,7 @@ const DemoModal = ({ open, onClose }: DemoModalProps) => {
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${salonConsultation})` }}
             />
-            <div className="absolute inset-0 bg-axis-charcoal/93" />
+            <div className="absolute inset-0 bg-axis-charcoal/96" />
             <div
               className="absolute inset-0"
               style={{
@@ -126,39 +126,41 @@ const DemoModal = ({ open, onClose }: DemoModalProps) => {
 
               {/* Step indicator */}
               <div className="px-8 pt-8 pb-0">
-                <p className="font-display text-[10px] tracking-[0.3em] uppercase text-axis-ivory/40 font-semibold">
+                <p className="font-display text-[10px] tracking-[0.3em] uppercase text-axis-ivory/70 font-semibold">
                   Step {slides[current].step} of 04
                 </p>
               </div>
 
               {/* Slide content */}
               <div className="px-8 py-10 min-h-[260px] flex items-center">
-                <AnimatePresence mode="wait" custom={direction}>
-                  <motion.div
-                    key={current}
-                    custom={direction}
-                    initial={{ x: direction * 30, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: direction * -30, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                    className="w-full"
-                  >
-                    <div className="w-12 h-12 flex items-center justify-center border border-axis-ivory/15 bg-axis-ivory/5 mb-6">
-                      {(() => {
-                        const Icon = slides[current].icon;
-                        return <Icon className="h-5 w-5 text-axis-ivory/70" strokeWidth={1.5} />;
-                      })()}
-                    </div>
+                <div className="w-full border border-axis-ivory/20 bg-axis-charcoal/55 backdrop-blur-sm p-6 md:p-8">
+                  <AnimatePresence mode="wait" custom={direction}>
+                    <motion.div
+                      key={current}
+                      custom={direction}
+                      initial={{ x: direction * 30, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: direction * -30, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                      className="w-full"
+                    >
+                      <div className="w-12 h-12 flex items-center justify-center border border-axis-ivory/30 bg-axis-charcoal/70 mb-6">
+                        {(() => {
+                          const Icon = slides[current].icon;
+                          return <Icon className="h-5 w-5 text-axis-ivory" strokeWidth={1.75} />;
+                        })()}
+                      </div>
 
-                    <h2 className="font-display text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase text-axis-ivory mb-4 leading-tight">
-                      {slides[current].title}
-                    </h2>
-                    <div className="w-10 h-px bg-axis-ivory/20 mb-5" />
-                    <p className="text-sm md:text-base text-axis-ivory/60 leading-relaxed max-w-md">
-                      {slides[current].text}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
+                      <h2 className="font-display text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase text-axis-ivory mb-4 leading-tight">
+                        {slides[current].title}
+                      </h2>
+                      <div className="w-10 h-px bg-axis-ivory/40 mb-5" />
+                      <p className="text-sm md:text-base text-axis-ivory/90 leading-relaxed max-w-md">
+                        {slides[current].text}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
 
               {/* Footer */}
