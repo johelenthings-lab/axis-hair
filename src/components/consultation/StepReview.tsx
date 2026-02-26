@@ -128,7 +128,7 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
         {/* Photo Upload */}
         <div className="border border-border rounded-sm p-5">
           <h3 className="font-display text-xs tracking-[0.2em] uppercase text-muted-foreground mb-4">
-            Photo Upload {data.serviceType === "quick_service" && <span className="normal-case text-muted-foreground/60">(optional)</span>}
+            Photo Upload <span className="normal-case text-muted-foreground/60">(optional)</span>
           </h3>
           <input
             ref={fileInputRef}
@@ -181,7 +181,7 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
               <>
                 <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm font-medium text-foreground">
-                  Upload Client Photo {isFullPreview && "*"}
+                  Upload Client Photo
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">JPG or PNG</p>
               </>
