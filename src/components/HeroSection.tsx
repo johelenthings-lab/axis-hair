@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DemoModal from "@/components/DemoModal";
 import { motion, AnimatePresence } from "framer-motion";
 import salon1 from "@/assets/salon-1.jpg";
 import salon2 from "@/assets/salon-2.jpg";
@@ -10,6 +11,7 @@ const images = [salon1, salon2, salon3];
 const HeroSection = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const [demoOpen, setDemoOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -71,15 +73,17 @@ const HeroSection = () => {
             >
               Start Free Trial
             </button>
-            <a
-              href="#dashboard"
+            <button
+              onClick={() => setDemoOpen(true)}
               className="inline-block text-center text-xs tracking-[0.15em] uppercase border-2 border-foreground text-foreground px-8 py-4 hover:bg-foreground hover:text-background transition-all duration-300 font-medium"
             >
               View Demo
-            </a>
+            </button>
           </div>
         </motion.div>
       </div>
+
+      <DemoModal open={demoOpen} onClose={() => setDemoOpen(false)} />
 
       {/* Bottom indicator */}
       <div className="absolute bottom-8 left-6 md:left-16 lg:left-24 flex gap-3 z-10">
