@@ -125,7 +125,14 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
             type="file"
             accept="image/jpeg,image/png"
             className="hidden"
-            onChange={(e) => onChange("clientPhoto", e.target.files?.[0] || null)}
+            onChange={(e) => {
+              try {
+                const file = e.target.files?.[0] || null;
+                onChange("clientPhoto", file);
+              } catch (err) {
+                console.error("Error selecting file:", err);
+              }
+            }}
           />
           <div
             onClick={() => fileInputRef.current?.click()}
