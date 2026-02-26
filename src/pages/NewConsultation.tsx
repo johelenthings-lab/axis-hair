@@ -203,8 +203,8 @@ const NewConsultation = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${salonConsultation})` }}
       />
-      <div className="absolute inset-0 bg-axis-ivory/88" />
-      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(30 10% 8% / 0.08) 100%)" }} />
+      <div className="absolute inset-0 bg-axis-ivory/80" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, hsl(30 10% 8% / 0.12) 100%)" }} />
       <header className="relative z-10 border-b border-border px-6 md:px-12 py-4 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
