@@ -35,8 +35,8 @@ const SolutionSection = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${salonPlatform})` }}
       />
-      <div className="absolute inset-0 bg-axis-ivory/80" />
-      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(30 10% 8% / 0.12) 100%)" }} />
+      <div className="absolute inset-0 bg-axis-ivory/90" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(30 10% 8% / 0.06) 100%)" }} />
       <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
