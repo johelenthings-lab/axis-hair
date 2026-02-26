@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +49,10 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 
 const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProps) => {
   const isFullPreview = data.serviceType === "full_preview";
+  const photoPreviewUrl = useMemo(
+    () => (data.clientPhoto ? URL.createObjectURL(data.clientPhoto) : null),
+    [data.clientPhoto],
+  );
 
   return (
     <div className="space-y-6">
@@ -140,12 +144,21 @@ const StepReview = ({ data, onChange, onGoToStep, fileInputRef }: StepReviewProp
               data.clientPhoto ? "border-accent/50 bg-accent/5" : "border-border hover:border-foreground/30"
             }`}
           >
-            {data.clientPhoto ? (
-              <>
-                <ImageIcon className="h-5 w-5 mx-auto text-accent mb-2" />
-                <p className="text-sm font-medium text-foreground">{data.clientPhoto.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">Click to change</p>
-              </>
+            {data.clientPhoto && photoPreviewUrl ? (
+              <div className="flex items-center gap-4 text-left">
+                <img
+                  src={photoPreviewUrl}
+                  alt="Client preview"
+                  className="h-20 w-20 rounded-sm object-cover border border-border shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{data.clientPhoto.name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {(data.clientPhoto.size / 1024).toFixed(0)} KB
+                  </p>
+                  <p className="text-xs text-accent mt-1 hover:underline">Click to change</p>
+                </div>
+              </div>
             ) : (
               <>
                 <Upload className="h-5 w-5 mx-auto text-muted-foreground mb-2" />
