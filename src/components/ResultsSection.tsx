@@ -14,7 +14,7 @@ const ResultsSection = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${salonResults})` }}
       />
-      <div className="absolute inset-0 bg-axis-ivory/88" />
+      <div className="absolute inset-0 bg-axis-ivory/95" />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 50%, hsl(30 10% 8% / 0.07) 100%)" }} />
 
       <div className="max-w-5xl mx-auto relative z-10">
