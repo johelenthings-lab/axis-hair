@@ -12,7 +12,9 @@ import StepFaceShape from "@/components/consultation/StepFaceShape";
 import StepHairTexture from "@/components/consultation/StepHairTexture";
 import StepLifestyle from "@/components/consultation/StepLifestyle";
 import StepReview from "@/components/consultation/StepReview";
+import StyleResultsGrid from "@/components/consultation/StyleResultsGrid";
 import { ConsultationFormData, INITIAL_FORM_DATA } from "@/components/consultation/types";
+import { useStyleGenerator } from "@/hooks/useStyleGenerator";
 
 const FULL_STEPS = ["Client Info", "Face Shape", "Hair Texture", "Lifestyle", "Review"];
 const QUICK_STEPS = ["Client Info", "Review"];
@@ -25,6 +27,7 @@ const NewConsultation = () => {
   const [direction, setDirection] = useState(1);
   const [formData, setFormData] = useState<ConsultationFormData>(INITIAL_FORM_DATA);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { selectedStyles, generated, remaining, generate } = useStyleGenerator();
 
   const isQuick = formData.serviceType === "quick_service";
   const steps = isQuick ? QUICK_STEPS : FULL_STEPS;
@@ -166,8 +169,11 @@ const NewConsultation = () => {
     supabase.functions.invoke("generate-recommendation", { body: { consultation_id: consultation.id } }).catch(console.error);
     supabase.functions.invoke("generate-preview-image", { body: { consultation_id: consultation.id } }).catch(console.error);
 
+    // Simulate style selection from STYLE_LIBRARY
+    generate();
+
     setLoading(false);
-    navigate(`/client-view/${consultation.id}`);
+    // Stay on page to show results; user can navigate via "View Consultation" button
   };
 
   const renderStep = () => {
@@ -251,47 +257,69 @@ const NewConsultation = () => {
           </AnimatePresence>
         </div>
 
-        {/* Navigation */}
-        <div className="pt-8 flex items-center gap-3">
-          {currentStep > 0 && (
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="tracking-[0.12em] uppercase text-xs h-12 px-8 border-border"
-            >
-              <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
-            </Button>
-          )}
-
-          {!isReviewStep ? (
-            <Button
-              onClick={handleNext}
-              className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
-            >
-              Next <ArrowRight className="h-3.5 w-3.5 ml-1" />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
-            >
-              {loading ? "Creating..." : (
-                <>
-                  <Check className="h-3.5 w-3.5 mr-1" /> Generate Styles
-                </>
-              )}
-            </Button>
-          )}
-
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="tracking-[0.12em] uppercase text-xs h-12 px-4 text-muted-foreground"
+        {/* Style Results */}
+        {generated && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="mt-10"
           >
-            Cancel
-          </Button>
-        </div>
+            <StyleResultsGrid styles={selectedStyles} remaining={remaining} />
+            <div className="pt-6">
+              <Button
+                onClick={() => navigate("/dashboard")}
+                className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
+              >
+                View Dashboard
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Navigation */}
+        {!generated && (
+          <div className="pt-8 flex items-center gap-3">
+            {currentStep > 0 && (
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="tracking-[0.12em] uppercase text-xs h-12 px-8 border-border"
+              >
+                <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
+              </Button>
+            )}
+
+            {!isReviewStep ? (
+              <Button
+                onClick={handleNext}
+                className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
+              >
+                Next <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="bg-accent text-accent-foreground hover:opacity-90 tracking-[0.18em] uppercase text-xs font-semibold h-12 px-8"
+              >
+                {loading ? "Creating..." : (
+                  <>
+                    <Check className="h-3.5 w-3.5 mr-1" /> Generate Styles
+                  </>
+                )}
+              </Button>
+            )}
+
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="tracking-[0.12em] uppercase text-xs h-12 px-4 text-muted-foreground"
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
