@@ -1,0 +1,16 @@
+{
+  "projectId": "prj_h3QcNDbzUA7Wl6Uin0Y6wPNPmFku",
+  "orgId": "team_1wMoWoaLQgwPrTPoJRxtzzig",
+  "projectName": "johelenthings-lab-axis-hair-508f88ba",
+  "settings": {
+    "createdAt": 1772494832292,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}
