@@ -1,17 +1,18 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import en from "./en.json";
-import pt from "./pt.json";
+import es from "./es.json";
+import fr from "./fr.json";
 
-export type Language = "en" | "pt";
+export type Language = "en" | "es" | "fr";
 type TranslationKey = keyof typeof en;
 type Translations = Record<TranslationKey, string>;
 
-const translationMap: Record<Language, Translations> = { en, pt };
+const translationMap: Record<Language, Translations> = { en, es, fr };
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: any) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

@@ -1,3 +1,4 @@
+import { Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -13,6 +14,12 @@ const Navbar = () => {
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  const handleLanguageCycle = () => {
+    if (language === "en") setLanguage("es");
+    else if (language === "es") setLanguage("fr");
+    else setLanguage("en");
+  };
 
   return (
     <motion.nav
@@ -41,28 +48,13 @@ const Navbar = () => {
           ))}
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center border border-border rounded-sm overflow-hidden">
-            <button
-              onClick={() => setLanguage("en")}
-              className={`text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 font-semibold transition-colors ${
-                language === "en"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage("pt")}
-              className={`text-[10px] tracking-[0.12em] uppercase px-2.5 py-1.5 font-semibold transition-colors ${
-                language === "pt"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              PT
-            </button>
-          </div>
+          <button
+            onClick={handleLanguageCycle}
+            className="flex items-center gap-2 text-[10px] tracking-[0.12em] uppercase px-3 py-2 font-semibold text-muted-foreground hover:text-foreground transition-all duration-300 border border-border/50 rounded-sm hover:bg-accent/10"
+          >
+            <Globe className="w-3 h-3 opacity-60" />
+            <span>{language.toUpperCase()}</span>
+          </button>
           <button
             onClick={() => navigate("/signup")}
             className="text-xs tracking-[0.18em] uppercase bg-accent text-accent-foreground px-5 py-2.5 font-semibold hover:opacity-90 transition-opacity"
